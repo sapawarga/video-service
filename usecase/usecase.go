@@ -25,7 +25,7 @@ func NewVideo(repo repository.DatabaseI, logger kitlog.Logger) *Video {
 	}
 }
 
-func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest) (interface{}, error) {
+func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest) (*model.VideoWithMetadata, error) {
 	logger := kitlog.With(v.logger, "method", "GetListVideo")
 
 	var limit, offset int64 = 0, 0
