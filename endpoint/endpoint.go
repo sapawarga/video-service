@@ -25,3 +25,29 @@ func MakeGetListVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoin
 		}, nil
 	}
 }
+
+func MakeGetDetailVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		req := request.(*RequestID)
+		resp, err := fs.GetDetailVideo(ctx, req.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		return &VideoDetail{
+			ID:           resp.ID,
+			Title:        resp.Title,
+			CategoryID:   resp.CategoryID,
+			CategoryName: resp.CategoryName,
+			Source:       resp.Source,
+			VideoURL:     resp.VideoURL,
+			RegencyID:    resp.RegencyID,
+			RegencyName:  resp.RegencyName,
+			Status:       resp.Status,
+			CreatedAt:    resp.CreatedAt,
+			UpdatedAt:    resp.UpdatedAt,
+			CreatedBy:    resp.CreatedBy,
+			UpdatedBy:    resp.UpdatedBy,
+		}, nil
+	}
+}

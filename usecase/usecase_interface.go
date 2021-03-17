@@ -8,6 +8,6 @@ import (
 
 type UsecaseI interface {
 	GetListVideo(ctx context.Context, req *model.GetListVideoRequest) (*model.VideoWithMetadata, error)
-	// GetDetailVideo(ctx context.Context, id int64) (interface{}, error)
+	GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetail, error)
 	// GetStatisticVideo(ctx context.Context, req interface{}) (interface{}, error)
 }

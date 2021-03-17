@@ -18,8 +18,15 @@ func MakeHandler(ctx context.Context, fs usecase.UsecaseI) transportVideo.VideoH
 		encodingGetListVideoResponse,
 	)
 
+	videoGetDetailHandler := kitgrpc.NewServer(
+		endpoint.MakeGetDetailVideo(ctx, fs),
+		decodingRequestID,
+		encodingGetDetailResponse,
+	)
+
 	return &grpcServer{
 		videoGetListHandler,
+		videoGetDetailHandler,
 	}
 }
 
@@ -71,4 +78,32 @@ func encodingGetListVideoResponse(ctx context.Context, r interface{}) (interface
 		Data:     videoResp,
 		Metadata: metadata,
 	}, nil
+}
+
+func decodingRequestID(ctx context.Context, r interface{}) (interface{}, error) {
+	req := r.(*transportVideo.RequestID)
+	return &endpoint.RequestID{
+		ID: req.GetId(),
+	}, nil
+}
+
+func encodingGetDetailResponse(ctx context.Context, r interface{}) (interface{}, error) {
+	{
+		resp := r.(*endpoint.VideoDetail)
+		return &transportVideo.GetDetailVideoResponse{
+			Id:           resp.ID,
+			Title:        resp.Title,
+			CategoryId:   helper.GetInt64FromPointer(resp.CategoryID),
+			CategoryName: helper.GetStringFromPointer(resp.CategoryName),
+			Source:       resp.Source,
+			VideoUrl:     resp.VideoURL,
+			RegencyId:    helper.GetInt64FromPointer(resp.RegencyID),
+			RegencyName:  helper.GetStringFromPointer(resp.RegencyName),
+			Status:       resp.Status,
+			CreatedAt:    resp.CreatedAt.String(),
+			UpdatedAt:    resp.UpdatedAt.String(),
+			CreatedBy:    helper.GetInt64FromPointer(resp.CreatedBy),
+			UpdatedBy:    helper.GetInt64FromPointer(resp.UpdatedBy),
+		}, nil
+	}
 }
