@@ -68,3 +68,45 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 		Metadata: meta,
 	}, nil
 }
+
+func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetail, error) {
+	logger := kitlog.With(v.logger, "method", "GetDetailVideo")
+	resp, err := v.repo.GetDetailVideo(ctx, id)
+	if err != nil {
+		level.Error(logger).Log("error_get_detail", err)
+		return nil, err
+	}
+
+	result := &model.VideoDetail{
+		ID:        resp.ID,
+		Title:     resp.Title.String,
+		Source:    resp.Source.String,
+		VideoURL:  resp.VideoURL.String,
+		Status:    resp.Status.Int64,
+		CreatedAt: helper.SetPointerTime(resp.CreatedAt.Time),
+		UpdatedAt: helper.SetPointerTime(resp.UpdatedAt.Time),
+		CreatedBy: helper.SetPointerInt64(resp.CreatedBy.Int64),
+		UpdatedBy: helper.SetPointerInt64(resp.UpdatedBy.Int64),
+	}
+
+	if resp.CategoryID.Valid {
+		name, err := v.repo.GetCategoryNameByID(ctx, resp.CategoryID.Int64)
+		if err != nil {
+			level.Error(logger).Log("error_get_category", err)
+			return nil, err
+		}
+		result.CategoryID = helper.SetPointerInt64(resp.CategoryID.Int64)
+		result.CategoryName = name
+	}
+	if resp.RegencyID.Valid {
+		name, err := v.repo.GetLocationNameByID(ctx, resp.RegencyID.Int64)
+		if err != nil {
+			level.Error(logger).Log("error_get_location", err)
+			return nil, err
+		}
+		result.RegencyID = helper.SetPointerInt64(resp.RegencyID.Int64)
+		result.RegencyName = name
+	}
+
+	return result, nil
+}

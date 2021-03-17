@@ -34,6 +34,36 @@ func (m *MockDatabaseI) EXPECT() *MockDatabaseIMockRecorder {
 	return m.recorder
 }
 
+// GetCategoryNameByID mocks base method
+func (m *MockDatabaseI) GetCategoryNameByID(arg0 context.Context, arg1 int64) (*string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCategoryNameByID", arg0, arg1)
+	ret0, _ := ret[0].(*string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCategoryNameByID indicates an expected call of GetCategoryNameByID
+func (mr *MockDatabaseIMockRecorder) GetCategoryNameByID(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryNameByID", reflect.TypeOf((*MockDatabaseI)(nil).GetCategoryNameByID), arg0, arg1)
+}
+
+// GetDetailVideo mocks base method
+func (m *MockDatabaseI) GetDetailVideo(arg0 context.Context, arg1 int64) (*model.VideoResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDetailVideo", arg0, arg1)
+	ret0, _ := ret[0].(*model.VideoResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDetailVideo indicates an expected call of GetDetailVideo
+func (mr *MockDatabaseIMockRecorder) GetDetailVideo(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDetailVideo", reflect.TypeOf((*MockDatabaseI)(nil).GetDetailVideo), arg0, arg1)
+}
+
 // GetListVideo mocks base method
 func (m *MockDatabaseI) GetListVideo(arg0 context.Context, arg1 *model.GetListVideoRepoRequest) ([]*model.VideoResponse, error) {
 	m.ctrl.T.Helper()
@@ -47,6 +77,21 @@ func (m *MockDatabaseI) GetListVideo(arg0 context.Context, arg1 *model.GetListVi
 func (mr *MockDatabaseIMockRecorder) GetListVideo(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListVideo", reflect.TypeOf((*MockDatabaseI)(nil).GetListVideo), arg0, arg1)
+}
+
+// GetLocationNameByID mocks base method
+func (m *MockDatabaseI) GetLocationNameByID(arg0 context.Context, arg1 int64) (*string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLocationNameByID", arg0, arg1)
+	ret0, _ := ret[0].(*string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLocationNameByID indicates an expected call of GetLocationNameByID
+func (mr *MockDatabaseIMockRecorder) GetLocationNameByID(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLocationNameByID", reflect.TypeOf((*MockDatabaseI)(nil).GetLocationNameByID), arg0, arg1)
 }
 
 // GetMetadataVideo mocks base method
