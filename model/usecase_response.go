@@ -28,3 +28,14 @@ type VideoDetail struct {
 	CreatedBy    *int64
 	UpdatedBy    *int64
 }
+
+type VideoStatisticWithMetadata struct {
+	Data     []*VideoStatistic
+	Metadata *Metadata
+}
+
+type VideoStatisticUC struct {
+	ID    int64
+	Name  string
+	Count int64
+}

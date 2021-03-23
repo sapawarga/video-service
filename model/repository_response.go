@@ -17,3 +17,9 @@ type VideoResponse struct {
 	CreatedBy  sql.NullInt64  `db:"created_by"`
 	UpdatedBy  sql.NullInt64  `db:"updated_by"`
 }
+
+type VideoStatistic struct {
+	ID    int64          `db:"id"`
+	Name  sql.NullString `db:"name"`
+	Count int64          `db:"count"`
+}

@@ -13,4 +13,5 @@ type DatabaseI interface {
 	GetDetailVideo(ctx context.Context, id int64) (*model.VideoResponse, error)
 	GetCategoryNameByID(ctx context.Context, id int64) (*string, error)
 	GetLocationNameByID(ctx context.Context, id int64) (*string, error)
+	GetVideoStatistic(ctx context.Context) ([]*model.VideoStatistic, error)
 }
