@@ -52,7 +52,7 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 	if req.Page != nil {
 		total, err := v.repo.GetMetadataVideo(ctx, request)
 		if err != nil {
-			level.Error(logger).Log()
+			level.Error(logger).Log("error_get_metadata", err)
 			return nil, err
 		}
 

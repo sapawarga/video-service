@@ -75,10 +75,24 @@ var _ = Describe("Usecase", func() {
 		}
 	}
 
+	var CreateNewVideoLogic = func(idx int) {
+		ctx := context.Background()
+		data := testcases.CreateNewVideoData[idx]
+		mockVideoRepo.EXPECT().GetCategoryNameByID(ctx, data.GetCategoryName).Return(data.MockGetCategoryName.Result, data.MockGetCategoryName.Error).Times(1)
+		mockVideoRepo.EXPECT().GetLocationNameByID(ctx, data.GetLocationName).Return(data.MockGetLocationName.Result, data.MockGetLocationName.Error).Times(1)
+		mockVideoRepo.EXPECT().InsertNewVideo(ctx, data.RepositoryRequest).Return(data.MockRepository).Times(1)
+		if err := video.CreateNewVideo(ctx, data.UsecaseRequest); err != nil {
+			Expect(err).NotTo(BeNil())
+		} else {
+			Expect(err).To(BeNil())
+		}
+	}
+
 	var unitTestLogic = map[string]map[string]interface{}{
 		"GetListVideo":      {"func": GetListVideoLogic, "test_case_count": len(testcases.GetListVideoData), "desc": testcases.ListVideoDescription()},
 		"GetDetailVideo":    {"func": GetDetailVideoLogic, "test_case_count": len(testcases.GetDetailVideoData), "desc": testcases.DetailVideoDescription()},
 		"GetStatisticVideo": {"func": GetVideoStatisticLogic, "test_case_count": len(testcases.GetVideoStatisticData), "desc": testcases.ListVideoStatistic()},
+		"CreateNewVideo":    {"func": CreateNewVideoLogic, "test_case_count": len(testcases.CreateNewVideoData), "desc": testcases.CreateNewVideoDescription()},
 	}
 
 	for _, val := range unitTestLogic {
