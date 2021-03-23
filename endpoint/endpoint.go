@@ -51,3 +51,16 @@ func MakeGetDetailVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 		}, nil
 	}
 }
+
+func MakeGetVideoStatistic(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		resp, err := fs.GetStatisticVideo(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		return &VideoStatisticResponse{
+			Data: resp,
+		}, nil
+	}
+}

@@ -26,3 +26,7 @@ type VideoDetail struct {
 	CreatedBy    *int64
 	UpdatedBy    *int64
 }
+
+type VideoStatisticResponse struct {
+	Data []*model.VideoStatisticUC `json:"data"`
+}

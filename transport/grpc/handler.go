@@ -8,8 +8,9 @@ import (
 )
 
 type grpcServer struct {
-	getList   kitgrpc.Handler
-	getDetail kitgrpc.Handler
+	getList      kitgrpc.Handler
+	getDetail    kitgrpc.Handler
+	getStatistic kitgrpc.Handler
 }
 
 func (g *grpcServer) GetListVideo(ctx context.Context, req *transportVideo.GetListVideoRequest) (*transportVideo.GetListVideoResponse, error) {
@@ -26,4 +27,12 @@ func (g *grpcServer) GetDetailVideo(ctx context.Context, req *transportVideo.Req
 		return nil, err
 	}
 	return resp.(*transportVideo.GetDetailVideoResponse), nil
+}
+
+func (g *grpcServer) GetStatisticVideo(ctx context.Context, req *transportVideo.NonRequest) (*transportVideo.GetStatisticVideoResponse, error) {
+	_, resp, err := g.getStatistic.ServeGRPC(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*transportVideo.GetStatisticVideoResponse), nil
 }
