@@ -14,4 +14,6 @@ type DatabaseI interface {
 	GetCategoryNameByID(ctx context.Context, id int64) (*string, error)
 	GetLocationNameByID(ctx context.Context, id int64) (*string, error)
 	GetVideoStatistic(ctx context.Context) ([]*model.VideoStatistic, error)
+	// query insert
+	InsertNewVideo(ctx context.Context, params *model.CreateVideoRequest) error
 }
