@@ -24,9 +24,16 @@ func MakeHandler(ctx context.Context, fs usecase.UsecaseI) transportVideo.VideoH
 		encodingGetDetailResponse,
 	)
 
+	videoGetStatisticHandler := kitgrpc.NewServer(
+		endpoint.MakeGetVideoStatistic(ctx, fs),
+		decodingNoRequest,
+		encodingGetVideoStatisticResponse,
+	)
+
 	return &grpcServer{
 		videoGetListHandler,
 		videoGetDetailHandler,
+		videoGetStatisticHandler,
 	}
 }
 
@@ -88,22 +95,42 @@ func decodingRequestID(ctx context.Context, r interface{}) (interface{}, error) 
 }
 
 func encodingGetDetailResponse(ctx context.Context, r interface{}) (interface{}, error) {
-	{
-		resp := r.(*endpoint.VideoDetail)
-		return &transportVideo.GetDetailVideoResponse{
-			Id:           resp.ID,
-			Title:        resp.Title,
-			CategoryId:   helper.GetInt64FromPointer(resp.CategoryID),
-			CategoryName: helper.GetStringFromPointer(resp.CategoryName),
-			Source:       resp.Source,
-			VideoUrl:     resp.VideoURL,
-			RegencyId:    helper.GetInt64FromPointer(resp.RegencyID),
-			RegencyName:  helper.GetStringFromPointer(resp.RegencyName),
-			Status:       resp.Status,
-			CreatedAt:    resp.CreatedAt.String(),
-			UpdatedAt:    resp.UpdatedAt.String(),
-			CreatedBy:    helper.GetInt64FromPointer(resp.CreatedBy),
-			UpdatedBy:    helper.GetInt64FromPointer(resp.UpdatedBy),
-		}, nil
+
+	resp := r.(*endpoint.VideoDetail)
+	return &transportVideo.GetDetailVideoResponse{
+		Id:           resp.ID,
+		Title:        resp.Title,
+		CategoryId:   helper.GetInt64FromPointer(resp.CategoryID),
+		CategoryName: helper.GetStringFromPointer(resp.CategoryName),
+		Source:       resp.Source,
+		VideoUrl:     resp.VideoURL,
+		RegencyId:    helper.GetInt64FromPointer(resp.RegencyID),
+		RegencyName:  helper.GetStringFromPointer(resp.RegencyName),
+		Status:       resp.Status,
+		CreatedAt:    resp.CreatedAt.String(),
+		UpdatedAt:    resp.UpdatedAt.String(),
+		CreatedBy:    helper.GetInt64FromPointer(resp.CreatedBy),
+		UpdatedBy:    helper.GetInt64FromPointer(resp.UpdatedBy),
+	}, nil
+
+}
+
+func decodingNoRequest(ctx context.Context, r interface{}) (interface{}, error) {
+	return r, nil
+}
+
+func encodingGetVideoStatisticResponse(ctx context.Context, r interface{}) (interface{}, error) {
+	resp := r.(*endpoint.VideoStatisticResponse)
+	result := make([]*transportVideo.VideoStatistic, 0)
+	for _, v := range resp.Data {
+		result = append(result, &transportVideo.VideoStatistic{
+			Id:    v.ID,
+			Name:  v.Name,
+			Count: v.Count,
+		})
 	}
+
+	return &transportVideo.GetStatisticVideoResponse{
+		Data: result,
+	}, nil
 }

@@ -108,3 +108,18 @@ func (mr *MockDatabaseIMockRecorder) GetMetadataVideo(arg0, arg1 interface{}) *g
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMetadataVideo", reflect.TypeOf((*MockDatabaseI)(nil).GetMetadataVideo), arg0, arg1)
 }
+
+// GetVideoStatistic mocks base method
+func (m *MockDatabaseI) GetVideoStatistic(arg0 context.Context) ([]*model.VideoStatistic, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetVideoStatistic", arg0)
+	ret0, _ := ret[0].([]*model.VideoStatistic)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetVideoStatistic indicates an expected call of GetVideoStatistic
+func (mr *MockDatabaseIMockRecorder) GetVideoStatistic(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetVideoStatistic", reflect.TypeOf((*MockDatabaseI)(nil).GetVideoStatistic), arg0)
+}

@@ -110,3 +110,23 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 
 	return result, nil
 }
+
+func (v *Video) GetStatisticVideo(ctx context.Context) ([]*model.VideoStatisticUC, error) {
+	logger := kitlog.With(v.logger, "method", "GetStatisticVideo")
+	resp, err := v.repo.GetVideoStatistic(ctx)
+	if err != nil {
+		level.Error(logger).Log("error_get_video_statistic", err)
+		return nil, err
+	}
+
+	result := make([]*model.VideoStatisticUC, 0)
+	for _, v := range resp {
+		result = append(result, &model.VideoStatisticUC{
+			ID:    v.ID,
+			Name:  v.Name.String,
+			Count: v.Count,
+		})
+	}
+
+	return result, nil
+}
