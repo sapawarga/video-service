@@ -231,10 +231,6 @@ github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFR
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
 github.com/samuel/go-zookeeper v0.0.0-20190923202752-2cc03de413da/go.mod h1:gi+0XIa01GRL2eRQVjQkKGqKF3SF9vZR/HnPullcV2E=
-github.com/sapawarga/proto-file v0.0.0-20210317061951-14db1560a499 h1:JSMnA738CXhl54yKp8dFvGERevyyn1+Yiuvvdxb62qo=
-github.com/sapawarga/proto-file v0.0.0-20210317061951-14db1560a499/go.mod h1:BbK0gf1YDzZvQzkKI8YsGSMHp9Iedtgw7a/XYoCMsBo=
-github.com/sapawarga/proto-file v0.0.0-20210317062517-0538660789a6 h1:x77ySCu6uPjhqZHF6qLZETbzZBxc/kNBqPsfUpTFzJ0=
-github.com/sapawarga/proto-file v0.0.0-20210317062517-0538660789a6/go.mod h1:BbK0gf1YDzZvQzkKI8YsGSMHp9Iedtgw7a/XYoCMsBo=
 github.com/sapawarga/proto-file v0.0.0-20210317075032-bce22a7dd375 h1:XUs7C4bdrVMwjt3xpV3EwU96rOdCG1GPf0kAcln/8BE=
 github.com/sapawarga/proto-file v0.0.0-20210317075032-bce22a7dd375/go.mod h1:BbK0gf1YDzZvQzkKI8YsGSMHp9Iedtgw7a/XYoCMsBo=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
