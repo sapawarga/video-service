@@ -93,8 +93,21 @@ var _ = Describe("Usecase", func() {
 		data := testcases.UpdateVideoData[idx]
 		mockVideoRepo.EXPECT().GetCategoryNameByID(ctx, data.GetCategoryName).Return(data.MockGetCategoryName.Result, data.MockGetCategoryName.Error).Times(1)
 		mockVideoRepo.EXPECT().GetLocationNameByID(ctx, data.GetLocationName).Return(data.MockGetLocationName.Result, data.MockGetLocationName.Error).Times(1)
+		mockVideoRepo.EXPECT().GetDetailVideo(ctx, data.GetDetailVideoRequest).Return(data.MockVideoDetail.Result, data.MockVideoDetail.Error).Times(1)
 		mockVideoRepo.EXPECT().Update(ctx, data.RepositoryRequest).Return(data.MockRepository).Times(1)
 		if err := video.UpdateVideo(ctx, data.UsecaseRequest); err != nil {
+			Expect(err).NotTo(BeNil())
+		} else {
+			Expect(err).To(BeNil())
+		}
+	}
+
+	var DeleteVideoLogic = func(idx int) {
+		ctx := context.Background()
+		data := testcases.DeleteVideoData[idx]
+		mockVideoRepo.EXPECT().GetDetailVideo(ctx, data.GetDetailVideoRequest).Return(data.MockVideoDetailResponse.Result, data.MockVideoDetailResponse.Error).Times(1)
+		mockVideoRepo.EXPECT().Delete(ctx, data.DeleteVideoRequest).Return(data.MockDeleteVideo).Times(1)
+		if err := video.DeleteVideo(ctx, data.UsecaseRequest); err != nil {
 			Expect(err).NotTo(BeNil())
 		} else {
 			Expect(err).To(BeNil())
@@ -107,6 +120,7 @@ var _ = Describe("Usecase", func() {
 		"GetStatisticVideo": {"func": GetVideoStatisticLogic, "test_case_count": len(testcases.GetVideoStatisticData), "desc": testcases.ListVideoStatistic()},
 		"CreateNewVideo":    {"func": CreateNewVideoLogic, "test_case_count": len(testcases.CreateNewVideoData), "desc": testcases.CreateNewVideoDescription()},
 		"UpdateVideo":       {"func": UpdateVideoLogic, "test_case_count": len(testcases.CreateNewVideoData), "desc": testcases.UpdateVideoDescription()},
+		"DeleteVideo":       {"func": DeleteVideoLogic, "test_case_count": len(testcases.DeleteVideoData), "desc": testcases.DeleteVideoDescription()},
 	}
 
 	for _, val := range unitTestLogic {

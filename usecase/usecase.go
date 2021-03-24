@@ -154,20 +154,29 @@ func (v *Video) CreateNewVideo(ctx context.Context, req *model.CreateVideoReques
 func (v *Video) UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) error {
 	logger := kitlog.With(v.logger, "method", "UpdateVideo")
 	var err error
-	if _, err = v.repo.GetCategoryNameByID(ctx, req.CategoryID); err != nil {
-		level.Error(logger).Log("error_get_category", err)
+
+	data, err := v.repo.GetDetailVideo(ctx, req.ID)
+	if err != nil {
+		level.Error(logger).Log("error_get_detail", err)
 		return err
+	}
+	if data != nil {
+		if _, err = v.repo.GetCategoryNameByID(ctx, req.CategoryID); err != nil {
+			level.Error(logger).Log("error_get_category", err)
+			return err
+		}
+
+		if _, err = v.repo.GetLocationNameByID(ctx, req.RegencyID); err != nil {
+			level.Error(logger).Log("error_get_regency", err)
+			return err
+		}
+
+		if err = v.repo.Update(ctx, req); err != nil {
+			level.Error(logger).Log("error_update_video", err)
+			return err
+		}
 	}
 
-	if _, err = v.repo.GetLocationNameByID(ctx, req.RegencyID); err != nil {
-		level.Error(logger).Log("error_get_regency", err)
-		return err
-	}
-
-	if err = v.repo.Update(ctx, req); err != nil {
-		level.Error(logger).Log("error_update_video", err)
-		return err
-	}
 	return nil
 }
 
