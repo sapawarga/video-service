@@ -18,4 +18,6 @@ type DatabaseI interface {
 	Insert(ctx context.Context, params *model.CreateVideoRequest) error
 	// query update
 	Update(ctx context.Context, params *model.UpdateVideoRequest) error
+	// query delete
+	Delete(ctx context.Context, id int64) error
 }

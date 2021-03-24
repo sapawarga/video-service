@@ -169,5 +169,22 @@ func (v *Video) UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) 
 		return err
 	}
 	return nil
+}
 
+func (v *Video) DeleteVideo(ctx context.Context, id int64) error {
+	logger := kitlog.With(v.logger, "method", "DeleteVideo")
+	data, err := v.repo.GetDetailVideo(ctx, id)
+	if err != nil {
+		level.Error(logger).Log("error_get_detail", err)
+		return err
+	}
+
+	if data != nil {
+		if err = v.repo.Delete(ctx, id); err != nil {
+			level.Error(logger).Log("error_delete", err)
+			return err
+		}
+	}
+
+	return nil
 }

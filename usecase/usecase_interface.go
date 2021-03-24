@@ -12,4 +12,5 @@ type UsecaseI interface {
 	GetStatisticVideo(ctx context.Context) ([]*model.VideoStatisticUC, error)
 	CreateNewVideo(ctx context.Context, req *model.CreateVideoRequest) error
 	UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) error
+	DeleteVideo(ctx context.Context, id int64) error
 }
