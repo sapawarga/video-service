@@ -69,7 +69,7 @@ func MakeGetVideoStatistic(ctx context.Context, fs usecase.UsecaseI) endpoint.En
 func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(*CreateVideoRequest)
-		if err := req.ValidateInputs(); err != nil {
+		if err := ValidateInputs(req); err != nil {
 			return nil, err
 		}
 
@@ -87,6 +87,31 @@ func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 		return &StatusResponse{
 			Code:    "status_created",
 			Message: "video_has_created_successfully",
+		}, nil
+	}
+}
+
+func MakeUpdateVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		req := request.(*UpdateVideoRequest)
+		if err := ValidateInputs(req); err != nil {
+			return nil, err
+		}
+
+		if err = fs.UpdateVideo(ctx, &model.UpdateVideoRequest{
+			ID:         helper.GetInt64FromPointer(req.ID),
+			Title:      helper.GetStringFromPointer(req.Title),
+			Source:     helper.GetStringFromPointer(req.Source),
+			CategoryID: helper.GetInt64FromPointer(req.CategoryID),
+			RegencyID:  helper.GetInt64FromPointer(req.RegencyID),
+			VideoURL:   helper.GetStringFromPointer(req.VideoURL),
+			Status:     helper.GetInt64FromPointer(req.Status),
+		}); err != nil {
+			return nil, err
+		}
+		return &StatusResponse{
+			Code:    "status_updated",
+			Message: "video_has_updated_successfully",
 		}, nil
 	}
 }

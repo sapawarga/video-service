@@ -144,9 +144,30 @@ func (v *Video) CreateNewVideo(ctx context.Context, req *model.CreateVideoReques
 		return err
 	}
 
-	if err = v.repo.InsertNewVideo(ctx, req); err != nil {
+	if err = v.repo.Insert(ctx, req); err != nil {
 		level.Error(logger).Log("error_insert_video", err)
 		return err
 	}
 	return nil
+}
+
+func (v *Video) UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) error {
+	logger := kitlog.With(v.logger, "method", "UpdateVideo")
+	var err error
+	if _, err = v.repo.GetCategoryNameByID(ctx, req.CategoryID); err != nil {
+		level.Error(logger).Log("error_get_category", err)
+		return err
+	}
+
+	if _, err = v.repo.GetLocationNameByID(ctx, req.RegencyID); err != nil {
+		level.Error(logger).Log("error_get_regency", err)
+		return err
+	}
+
+	if err = v.repo.Update(ctx, req); err != nil {
+		level.Error(logger).Log("error_update_video", err)
+		return err
+	}
+	return nil
+
 }

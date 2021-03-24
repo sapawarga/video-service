@@ -36,11 +36,18 @@ func MakeHandler(ctx context.Context, fs usecase.UsecaseI) transportVideo.VideoH
 		encodingStatusResponse,
 	)
 
+	videoUpdateHandler := kitgrpc.NewServer(
+		endpoint.MakeUpdateVideo(ctx, fs),
+		decodingUpdateVideo,
+		encodingStatusResponse,
+	)
+
 	return &grpcServer{
 		videoGetListHandler,
 		videoGetDetailHandler,
 		videoGetStatisticHandler,
 		videoCreateHandler,
+		videoUpdateHandler,
 	}
 }
 
@@ -151,5 +158,19 @@ func encodingStatusResponse(ctx context.Context, r interface{}) (interface{}, er
 	return &transportVideo.StatusResponse{
 		Code:    resp.Code,
 		Message: resp.Message,
+	}, nil
+}
+
+func decodingUpdateVideo(ctx context.Context, r interface{}) (interface{}, error) {
+	req := r.(*transportVideo.UpdateVideoRequest)
+
+	return &endpoint.UpdateVideoRequest{
+		ID:         helper.SetPointerInt64(req.GetId()),
+		Title:      helper.SetPointerString(req.GetTitle()),
+		Source:     helper.SetPointerString(req.GetSource()),
+		CategoryID: helper.SetPointerInt64(req.GetCategoryId()),
+		RegencyID:  helper.SetPointerInt64(req.GetRegencyId()),
+		VideoURL:   helper.SetPointerString(req.GetVideoUrl()),
+		Status:     helper.SetPointerInt64(req.GetStatus()),
 	}, nil
 }

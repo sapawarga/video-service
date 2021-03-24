@@ -80,8 +80,21 @@ var _ = Describe("Usecase", func() {
 		data := testcases.CreateNewVideoData[idx]
 		mockVideoRepo.EXPECT().GetCategoryNameByID(ctx, data.GetCategoryName).Return(data.MockGetCategoryName.Result, data.MockGetCategoryName.Error).Times(1)
 		mockVideoRepo.EXPECT().GetLocationNameByID(ctx, data.GetLocationName).Return(data.MockGetLocationName.Result, data.MockGetLocationName.Error).Times(1)
-		mockVideoRepo.EXPECT().InsertNewVideo(ctx, data.RepositoryRequest).Return(data.MockRepository).Times(1)
+		mockVideoRepo.EXPECT().Insert(ctx, data.RepositoryRequest).Return(data.MockRepository).Times(1)
 		if err := video.CreateNewVideo(ctx, data.UsecaseRequest); err != nil {
+			Expect(err).NotTo(BeNil())
+		} else {
+			Expect(err).To(BeNil())
+		}
+	}
+
+	var UpdateVideoLogic = func(idx int) {
+		ctx := context.Background()
+		data := testcases.UpdateVideoData[idx]
+		mockVideoRepo.EXPECT().GetCategoryNameByID(ctx, data.GetCategoryName).Return(data.MockGetCategoryName.Result, data.MockGetCategoryName.Error).Times(1)
+		mockVideoRepo.EXPECT().GetLocationNameByID(ctx, data.GetLocationName).Return(data.MockGetLocationName.Result, data.MockGetLocationName.Error).Times(1)
+		mockVideoRepo.EXPECT().Update(ctx, data.RepositoryRequest).Return(data.MockRepository).Times(1)
+		if err := video.UpdateVideo(ctx, data.UsecaseRequest); err != nil {
 			Expect(err).NotTo(BeNil())
 		} else {
 			Expect(err).To(BeNil())
@@ -93,6 +106,7 @@ var _ = Describe("Usecase", func() {
 		"GetDetailVideo":    {"func": GetDetailVideoLogic, "test_case_count": len(testcases.GetDetailVideoData), "desc": testcases.DetailVideoDescription()},
 		"GetStatisticVideo": {"func": GetVideoStatisticLogic, "test_case_count": len(testcases.GetVideoStatisticData), "desc": testcases.ListVideoStatistic()},
 		"CreateNewVideo":    {"func": CreateNewVideoLogic, "test_case_count": len(testcases.CreateNewVideoData), "desc": testcases.CreateNewVideoDescription()},
+		"UpdateVideo":       {"func": UpdateVideoLogic, "test_case_count": len(testcases.CreateNewVideoData), "desc": testcases.UpdateVideoDescription()},
 	}
 
 	for _, val := range unitTestLogic {
