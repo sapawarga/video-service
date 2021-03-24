@@ -115,3 +115,18 @@ func MakeUpdateVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 		}, nil
 	}
 }
+
+func MakeDeleteVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		req := request.(*RequestID)
+
+		if err := fs.DeleteVideo(ctx, req.ID); err != nil {
+			return nil, err
+		}
+
+		return &StatusResponse{
+			Code:    "status_deleted",
+			Message: "video_has_deleted_successfully",
+		}, nil
+	}
+}

@@ -42,12 +42,19 @@ func MakeHandler(ctx context.Context, fs usecase.UsecaseI) transportVideo.VideoH
 		encodingStatusResponse,
 	)
 
+	videoDeleteHandler := kitgrpc.NewServer(
+		endpoint.MakeDeleteVideo(ctx, fs),
+		decodingRequestID,
+		encodingStatusResponse,
+	)
+
 	return &grpcServer{
 		videoGetListHandler,
 		videoGetDetailHandler,
 		videoGetStatisticHandler,
 		videoCreateHandler,
 		videoUpdateHandler,
+		videoDeleteHandler,
 	}
 }
 
