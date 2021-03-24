@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-kit/kit/endpoint"
+	"github.com/sapawarga/video-service/helper"
 	"github.com/sapawarga/video-service/model"
 	"github.com/sapawarga/video-service/usecase"
 )
@@ -61,6 +62,31 @@ func MakeGetVideoStatistic(ctx context.Context, fs usecase.UsecaseI) endpoint.En
 
 		return &VideoStatisticResponse{
 			Data: resp,
+		}, nil
+	}
+}
+
+func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		req := request.(*CreateVideoRequest)
+		if err := req.ValidateInputs(); err != nil {
+			return nil, err
+		}
+
+		if err = fs.CreateNewVideo(ctx, &model.CreateVideoRequest{
+			Title:      helper.GetStringFromPointer(req.Source),
+			Source:     helper.GetStringFromPointer(req.Source),
+			CategoryID: helper.GetInt64FromPointer(req.CategoryID),
+			RegencyID:  helper.GetInt64FromPointer(req.RegencyID),
+			VideoURL:   helper.GetStringFromPointer(req.VideoURL),
+			Status:     helper.GetInt64FromPointer(req.Status),
+		}); err != nil {
+			return nil, err
+		}
+
+		return &StatusResponse{
+			Code:    "status_created",
+			Message: "video_has_created_successfully",
 		}, nil
 	}
 }
