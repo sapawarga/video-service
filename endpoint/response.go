@@ -30,3 +30,8 @@ type VideoDetail struct {
 type VideoStatisticResponse struct {
 	Data []*model.VideoStatisticUC `json:"data"`
 }
+
+type StatusResponse struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}

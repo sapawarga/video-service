@@ -52,7 +52,7 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 	if req.Page != nil {
 		total, err := v.repo.GetMetadataVideo(ctx, request)
 		if err != nil {
-			level.Error(logger).Log()
+			level.Error(logger).Log("error_get_metadata", err)
 			return nil, err
 		}
 
@@ -129,4 +129,24 @@ func (v *Video) GetStatisticVideo(ctx context.Context) ([]*model.VideoStatisticU
 	}
 
 	return result, nil
+}
+
+func (v *Video) CreateNewVideo(ctx context.Context, req *model.CreateVideoRequest) error {
+	logger := kitlog.With(v.logger, "method", "CreateNewVideo")
+	var err error
+	if _, err = v.repo.GetCategoryNameByID(ctx, req.CategoryID); err != nil {
+		level.Error(logger).Log("error_get_category", err)
+		return err
+	}
+
+	if _, err = v.repo.GetLocationNameByID(ctx, req.RegencyID); err != nil {
+		level.Error(logger).Log("error_get_regency", err)
+		return err
+	}
+
+	if err = v.repo.InsertNewVideo(ctx, req); err != nil {
+		level.Error(logger).Log("error_insert_video", err)
+		return err
+	}
+	return nil
 }

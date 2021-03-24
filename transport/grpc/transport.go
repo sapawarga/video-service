@@ -30,27 +30,25 @@ func MakeHandler(ctx context.Context, fs usecase.UsecaseI) transportVideo.VideoH
 		encodingGetVideoStatisticResponse,
 	)
 
+	videoCreateHandler := kitgrpc.NewServer(
+		endpoint.MakeCreateNewVideo(ctx, fs),
+		decodingCreateNewVideoRequest,
+		encodingStatusResponse,
+	)
+
 	return &grpcServer{
 		videoGetListHandler,
 		videoGetDetailHandler,
 		videoGetStatisticHandler,
+		videoCreateHandler,
 	}
 }
 
 func decodingGetListVideoRequest(ctx context.Context, r interface{}) (interface{}, error) {
 	req := r.(*transportVideo.GetListVideoRequest)
-	var regencyID, page *int64
-
-	if req.Page != 0 {
-		page = helper.SetPointerInt64(req.Page)
-	}
-	if req.RegencyId != 0 {
-		regencyID = helper.SetPointerInt64(req.RegencyId)
-	}
-
 	return &endpoint.GetVideoRequest{
-		RegencyID: regencyID,
-		Page:      page,
+		RegencyID: helper.SetPointerInt64(req.GetRegencyId()),
+		Page:      helper.SetPointerInt64(req.GetPage()),
 	}, nil
 }
 
@@ -95,7 +93,6 @@ func decodingRequestID(ctx context.Context, r interface{}) (interface{}, error) 
 }
 
 func encodingGetDetailResponse(ctx context.Context, r interface{}) (interface{}, error) {
-
 	resp := r.(*endpoint.VideoDetail)
 	return &transportVideo.GetDetailVideoResponse{
 		Id:           resp.ID,
@@ -132,5 +129,27 @@ func encodingGetVideoStatisticResponse(ctx context.Context, r interface{}) (inte
 
 	return &transportVideo.GetStatisticVideoResponse{
 		Data: result,
+	}, nil
+}
+
+func decodingCreateNewVideoRequest(ctx context.Context, r interface{}) (interface{}, error) {
+	req := r.(*transportVideo.CreateVideoRequest)
+
+	return &endpoint.CreateVideoRequest{
+		Title:      helper.SetPointerString(req.GetSource()),
+		Source:     helper.SetPointerString(req.GetSource()),
+		CategoryID: helper.SetPointerInt64(req.GetCategoryId()),
+		RegencyID:  helper.SetPointerInt64(req.GetRegencyId()),
+		VideoURL:   helper.SetPointerString(req.GetVideoUrl()),
+		Status:     helper.SetPointerInt64(req.GetStatus()),
+	}, nil
+}
+
+func encodingStatusResponse(ctx context.Context, r interface{}) (interface{}, error) {
+	resp := r.(*endpoint.StatusResponse)
+
+	return &transportVideo.StatusResponse{
+		Code:    resp.Code,
+		Message: resp.Message,
 	}, nil
 }

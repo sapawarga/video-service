@@ -11,6 +11,7 @@ type grpcServer struct {
 	getList      kitgrpc.Handler
 	getDetail    kitgrpc.Handler
 	getStatistic kitgrpc.Handler
+	createVideo  kitgrpc.Handler
 }
 
 func (g *grpcServer) GetListVideo(ctx context.Context, req *transportVideo.GetListVideoRequest) (*transportVideo.GetListVideoResponse, error) {
@@ -35,4 +36,12 @@ func (g *grpcServer) GetStatisticVideo(ctx context.Context, req *transportVideo.
 		return nil, err
 	}
 	return resp.(*transportVideo.GetStatisticVideoResponse), nil
+}
+
+func (g *grpcServer) CreateNewVideo(ctx context.Context, req *transportVideo.CreateVideoRequest) (*transportVideo.StatusResponse, error) {
+	_, resp, err := g.createVideo.ServeGRPC(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*transportVideo.StatusResponse), nil
 }
