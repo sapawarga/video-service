@@ -80,7 +80,7 @@ var _ = Describe("Usecase", func() {
 		data := testcases.CreateNewVideoData[idx]
 		mockVideoRepo.EXPECT().GetCategoryNameByID(ctx, data.GetCategoryName).Return(data.MockGetCategoryName.Result, data.MockGetCategoryName.Error).Times(1)
 		mockVideoRepo.EXPECT().GetLocationNameByID(ctx, data.GetLocationName).Return(data.MockGetLocationName.Result, data.MockGetLocationName.Error).Times(1)
-		mockVideoRepo.EXPECT().InsertNewVideo(ctx, data.RepositoryRequest).Return(data.MockRepository).Times(1)
+		mockVideoRepo.EXPECT().Insert(ctx, data.RepositoryRequest).Return(data.MockRepository).Times(1)
 		if err := video.CreateNewVideo(ctx, data.UsecaseRequest); err != nil {
 			Expect(err).NotTo(BeNil())
 		} else {
