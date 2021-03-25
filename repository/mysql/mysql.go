@@ -3,6 +3,7 @@ package mysql
 import (
 	"bytes"
 	"context"
+	"database/sql"
 
 	"github.com/sapawarga/video-service/helper"
 	"github.com/sapawarga/video-service/model"
@@ -27,7 +28,8 @@ func (r *VideoRepository) GetListVideo(ctx context.Context, req *model.GetListVi
 	var err error
 
 	query.WriteString(`
-		category_id, title, source, video_url, kabkota_id, status, created_at, updated_at, created_by, updated_by
+		id, category_id, title, source, video_url, kabkota_id, status, FROM_UNIXTIME(created_at) as created_at, 
+		FROM_UNIXTIME(updated_at) as updated_at, created_by, updated_by
 		FROM videos
 	`)
 	if req.RegencyID != nil {
@@ -43,6 +45,61 @@ func (r *VideoRepository) GetListVideo(ctx context.Context, req *model.GetListVi
 		err = r.conn.SelectContext(ctx, &result, query.String(), queryParams...)
 	} else {
 		err = r.conn.Select(&result, query.String(), queryParams...)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (r *VideoRepository) GetMetadataVideo(ctx context.Context, req *model.GetListVideoRepoRequest) (*int64, error) {
+	var query bytes.Buffer
+	var queryParams []interface{}
+	var total *int64
+	var err error
+
+	query.WriteString(`
+		SELECT COUNT(1) FROM videos
+	`)
+	if req.RegencyID != nil {
+		query.WriteString(" WHERE kabkota_id = ? ")
+		queryParams = append(queryParams, req.RegencyID)
+	}
+
+	if ctx != nil {
+		err = r.conn.GetContext(ctx, total, query.String(), queryParams...)
+	} else {
+		err = r.conn.Get(total, query.String(), queryParams...)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return total, nil
+}
+
+func (r *VideoRepository) GetDetailVideo(ctx context.Context, id int64) (*model.VideoResponse, error) {
+	var query bytes.Buffer
+	var result = &model.VideoResponse{}
+	var err error
+
+	query.WriteString(`
+	SELECT
+		id, category_id, title, source, video_url, kabkota_id, status, FROM_UNIXTIME(created_at) as created_at, 
+		FROM_UNIXTIME(updated_at) as updated_at, created_by, updated_by
+	FROM videos WHERE id = ?
+	`)
+	if ctx != nil {
+		err = r.conn.GetContext(ctx, result, query.String(), id)
+	} else {
+		err = r.conn.Get(result, query.String(), id)
+	}
+
+	if err == sql.ErrNoRows {
+		return nil, sql.ErrNoRows
 	}
 
 	if err != nil {
