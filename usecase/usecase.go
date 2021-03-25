@@ -139,9 +139,11 @@ func (v *Video) CreateNewVideo(ctx context.Context, req *model.CreateVideoReques
 		return err
 	}
 
-	if _, err = v.repo.GetLocationNameByID(ctx, req.RegencyID); err != nil {
-		level.Error(logger).Log("error_get_regency", err)
-		return err
+	if req.RegencyID != nil {
+		if _, err = v.repo.GetLocationNameByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
+			level.Error(logger).Log("error_get_regency", err)
+			return err
+		}
 	}
 
 	if err = v.repo.Insert(ctx, req); err != nil {
@@ -161,14 +163,18 @@ func (v *Video) UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) 
 		return err
 	}
 	if data != nil {
-		if _, err = v.repo.GetCategoryNameByID(ctx, helper.GetInt64FromPointer(req.CategoryID)); err != nil {
-			level.Error(logger).Log("error_get_category", err)
-			return err
+		if req.CategoryID != nil {
+			if _, err = v.repo.GetCategoryNameByID(ctx, helper.GetInt64FromPointer(req.CategoryID)); err != nil {
+				level.Error(logger).Log("error_get_category", err)
+				return err
+			}
 		}
 
-		if _, err = v.repo.GetLocationNameByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
-			level.Error(logger).Log("error_get_regency", err)
-			return err
+		if req.RegencyID != nil {
+			if _, err = v.repo.GetLocationNameByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
+				level.Error(logger).Log("error_get_regency", err)
+				return err
+			}
 		}
 
 		if err = v.repo.Update(ctx, req); err != nil {

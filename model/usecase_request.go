@@ -9,7 +9,7 @@ type CreateVideoRequest struct {
 	Title      string
 	Source     string
 	CategoryID int64
-	RegencyID  int64
+	RegencyID  *int64
 	VideoURL   string
 	Status     int64
 }

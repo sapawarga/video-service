@@ -155,7 +155,7 @@ func decodingCreateNewVideoRequest(ctx context.Context, r interface{}) (interfac
 		CategoryID: helper.SetPointerInt64(req.GetCategoryId()),
 		RegencyID:  helper.SetPointerInt64(req.GetRegencyId()),
 		VideoURL:   helper.SetPointerString(req.GetVideoUrl()),
-		Status:     helper.SetPointerInt64(req.GetStatus()),
+		Status:     &req.Status,
 	}, nil
 }
 

@@ -77,7 +77,7 @@ func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 			Title:      helper.GetStringFromPointer(req.Source),
 			Source:     helper.GetStringFromPointer(req.Source),
 			CategoryID: helper.GetInt64FromPointer(req.CategoryID),
-			RegencyID:  helper.GetInt64FromPointer(req.RegencyID),
+			RegencyID:  req.RegencyID,
 			VideoURL:   helper.GetStringFromPointer(req.VideoURL),
 			Status:     helper.GetInt64FromPointer(req.Status),
 		}); err != nil {

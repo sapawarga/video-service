@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/sapawarga/video-service/helper"
 )
 
 type GetVideoRequest struct {
@@ -38,20 +39,20 @@ type UpdateVideoRequest struct {
 func ValidateInputs(in interface{}) error {
 	if obj, ok := in.(*CreateVideoRequest); ok {
 		return validation.ValidateStruct(obj,
-			validation.Field(obj.Title, validation.Required, validation.Length(10, 0)),
-			validation.Field(obj.Source, validation.Required, validation.In("youtube")),
-			validation.Field(obj.CategoryID, validation.Required),
-			validation.Field(obj.VideoURL, validation.Required, validation.Match(regexp.MustCompile("/^(https://www.youtube.com)/.+$/"))),
-			validation.Field(obj.Status, validation.Required, validation.In(-1, 0, 10)),
+			validation.Field(&obj.Title, validation.Required, validation.Length(0, 10)),
+			validation.Field(&obj.Source, validation.Required, validation.In("youtube")),
+			validation.Field(&obj.CategoryID, validation.Required),
+			validation.Field(&obj.VideoURL, validation.Required, validation.Match(regexp.MustCompile("^(https://www.youtube.com/).+$"))),
+			validation.Field(&obj.Status, validation.Required, validation.In(helper.DELETED, helper.ACTIVED, helper.INACTIVED)),
 		)
 	} else if obj, ok := in.(*UpdateVideoRequest); ok {
 		return validation.ValidateStruct(obj,
-			validation.Field(obj.ID, validation.Required),
-			validation.Field(obj.Title, validation.Required, validation.Length(10, 0)),
-			validation.Field(obj.Source, validation.Required, validation.In("youtube")),
-			validation.Field(obj.CategoryID, validation.Required),
-			validation.Field(obj.VideoURL, validation.Required, validation.Match(regexp.MustCompile("/^(https://www.youtube.com)/.+$/"))),
-			validation.Field(obj.Status, validation.Required, validation.In(-1, 0, 10)),
+			validation.Field(&obj.ID, validation.Required),
+			validation.Field(&obj.Title, validation.Length(0, 10)),
+			validation.Field(&obj.Source, validation.In("youtube")),
+			validation.Field(&obj.CategoryID),
+			validation.Field(&obj.VideoURL, validation.Match(regexp.MustCompile("^(https://www.youtube.com/).+$"))),
+			validation.Field(&obj.Status, validation.In(helper.DELETED, helper.ACTIVED, helper.INACTIVED)),
 		)
 	}
 	return errors.New("format_struct_not_valid")
