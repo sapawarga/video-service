@@ -28,8 +28,9 @@ func (r *VideoRepository) GetListVideo(ctx context.Context, req *model.GetListVi
 	var err error
 
 	query.WriteString(`
-		id, category_id, title, source, video_url, kabkota_id, status, FROM_UNIXTIME(created_at) as created_at, 
-		FROM_UNIXTIME(updated_at) as updated_at, created_by, updated_by
+		SELECT
+			id, category_id, title, source, video_url, kabkota_id, status, FROM_UNIXTIME(created_at) as created_at, 
+			FROM_UNIXTIME(updated_at) as updated_at, created_by, updated_by
 		FROM videos
 	`)
 	if req.RegencyID != nil {
@@ -90,8 +91,10 @@ func (r *VideoRepository) GetDetailVideo(ctx context.Context, id int64) (*model.
 	SELECT
 		id, category_id, title, source, video_url, kabkota_id, status, FROM_UNIXTIME(created_at) as created_at, 
 		FROM_UNIXTIME(updated_at) as updated_at, created_by, updated_by
-	FROM videos WHERE id = ?
+	FROM videos
 	`)
+	query.WriteString(" WHERE id = ? ")
+
 	if ctx != nil {
 		err = r.conn.GetContext(ctx, result, query.String(), id)
 	} else {
@@ -114,7 +117,7 @@ func (r *VideoRepository) GetCategoryNameByID(ctx context.Context, id int64) (*s
 	var result *string
 	var err error
 
-	query.WriteString(` SELECT name from categories WHERE id = ? AND type = 'phonebook' AND status = 10 `)
+	query.WriteString(` SELECT name from categories WHERE id = ? AND type = 'video' AND status = 10 `)
 	if ctx != nil {
 		err = r.conn.GetContext(ctx, &result, query.String(), id)
 	} else {
@@ -161,7 +164,7 @@ func (r *VideoRepository) GetVideoStatistic(ctx context.Context) ([]*model.Video
 	var err error
 
 	query.WriteString(`
-		SELECT  c.id, c.name , COUNT(v.category_id) as total 
+		SELECT  c.id, c.name , COUNT(v.category_id) as count 
 		FROM sapawarga.videos v 
 		JOIN sapawarga.categories c  
 		ON c.id = v.category_id 

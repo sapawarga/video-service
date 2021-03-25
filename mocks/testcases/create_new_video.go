@@ -12,7 +12,7 @@ var newVideoRequest = &model.CreateVideoRequest{
 	Title:      helper.GenerateRandomString(12),
 	Source:     "youtube",
 	CategoryID: 1,
-	RegencyID:  1,
+	RegencyID:  helper.SetPointerInt64(1),
 	VideoURL:   helper.GenerateRandomString(10),
 	Status:     10,
 }
