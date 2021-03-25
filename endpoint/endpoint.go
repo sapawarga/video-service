@@ -99,13 +99,13 @@ func MakeUpdateVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 		}
 
 		if err = fs.UpdateVideo(ctx, &model.UpdateVideoRequest{
-			ID:         helper.GetInt64FromPointer(req.ID),
-			Title:      helper.GetStringFromPointer(req.Title),
-			Source:     helper.GetStringFromPointer(req.Source),
-			CategoryID: helper.GetInt64FromPointer(req.CategoryID),
-			RegencyID:  helper.GetInt64FromPointer(req.RegencyID),
-			VideoURL:   helper.GetStringFromPointer(req.VideoURL),
-			Status:     helper.GetInt64FromPointer(req.Status),
+			ID:         req.ID,
+			Title:      req.Title,
+			Source:     req.Source,
+			CategoryID: req.CategoryID,
+			RegencyID:  req.RegencyID,
+			VideoURL:   req.VideoURL,
+			Status:     req.Status,
 		}); err != nil {
 			return nil, err
 		}
