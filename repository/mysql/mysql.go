@@ -214,3 +214,90 @@ func (r *VideoRepository) Insert(ctx context.Context, params *model.CreateVideoR
 
 	return nil
 }
+
+func (r *VideoRepository) Update(ctx context.Context, params *model.UpdateVideoRequest) error {
+	var query bytes.Buffer
+	var queryParams = make(map[string]interface{})
+	var first = true
+	var err error
+	_, unixTime := helper.GetCurrentTimeUTC()
+
+	query.WriteString(` UPDATE videos SET`)
+	if params.CategoryID != nil {
+		query.WriteString(` category_id = :category_id`)
+		queryParams["category_id"] = params.CategoryID
+		first = false
+	}
+	if params.Title != nil {
+		if !first {
+			query.WriteString(" , ")
+		}
+		query.WriteString(" title = :title ")
+		queryParams["title"] = params.Title
+		first = false
+	}
+	if params.Source != nil {
+		if !first {
+			query.WriteString(" , ")
+		}
+		query.WriteString(" source = :source ")
+		queryParams["source"] = params.Source
+		first = false
+	}
+	if params.VideoURL != nil {
+		if !first {
+			query.WriteString(" , ")
+		}
+		query.WriteString(" video_url = :video_url ")
+		queryParams["video_url"] = params.VideoURL
+		first = false
+	}
+	if params.Status != nil {
+		if !first {
+			query.WriteString(" , ")
+		}
+		query.WriteString(" status = :status")
+		queryParams["status"] = params.Status
+		first = false
+	}
+	if !first {
+		query.WriteString(" , ")
+	}
+	query.WriteString(" kabkota_id = :regency_id ,  created_at = :updated_at, updated_at = :updated_at WHERE id = :id")
+	queryParams["regency_id"] = params.RegencyID
+	queryParams["updated_at"] = unixTime
+	queryParams["id"] = params.ID
+
+	if ctx != nil {
+		_, err = r.conn.NamedExecContext(ctx, query.String(), queryParams)
+	} else {
+		_, err = r.conn.NamedExec(query.String(), queryParams)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *VideoRepository) Delete(ctx context.Context, id int64) error {
+	var query bytes.Buffer
+	var params = make(map[string]interface{})
+	var err error
+
+	query.WriteString(" UPDATE videos SET status = :status WHERE id = :id ")
+	params["status"] = helper.DELETED
+	params["id"] = id
+	if ctx != nil {
+		_, err = r.conn.NamedExecContext(ctx, query.String(), params)
+	} else {
+		_, err = r.conn.NamedExec(query.String(), params)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

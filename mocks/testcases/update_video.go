@@ -9,13 +9,13 @@ import (
 )
 
 var videoUpdate = &model.UpdateVideoRequest{
-	ID:         1,
-	Title:      helper.GenerateRandomString(10),
-	Source:     "youtube",
-	CategoryID: 1,
-	RegencyID:  1,
-	VideoURL:   helper.GenerateRandomString(10),
-	Status:     10,
+	ID:         helper.SetPointerInt64(1),
+	Title:      helper.SetPointerString(helper.GenerateRandomString(10)),
+	Source:     helper.SetPointerString("youtube"),
+	CategoryID: helper.SetPointerInt64(1),
+	RegencyID:  helper.SetPointerInt64(1),
+	VideoURL:   helper.SetPointerString(helper.GenerateRandomString(10)),
+	Status:     helper.SetPointerInt64(10),
 }
 
 type UpdateVideo struct {

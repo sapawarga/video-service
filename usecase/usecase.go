@@ -155,18 +155,18 @@ func (v *Video) UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) 
 	logger := kitlog.With(v.logger, "method", "UpdateVideo")
 	var err error
 
-	data, err := v.repo.GetDetailVideo(ctx, req.ID)
+	data, err := v.repo.GetDetailVideo(ctx, helper.GetInt64FromPointer(req.ID))
 	if err != nil {
 		level.Error(logger).Log("error_get_detail", err)
 		return err
 	}
 	if data != nil {
-		if _, err = v.repo.GetCategoryNameByID(ctx, req.CategoryID); err != nil {
+		if _, err = v.repo.GetCategoryNameByID(ctx, helper.GetInt64FromPointer(req.CategoryID)); err != nil {
 			level.Error(logger).Log("error_get_category", err)
 			return err
 		}
 
-		if _, err = v.repo.GetLocationNameByID(ctx, req.RegencyID); err != nil {
+		if _, err = v.repo.GetLocationNameByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
 			level.Error(logger).Log("error_get_regency", err)
 			return err
 		}
