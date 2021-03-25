@@ -69,9 +69,9 @@ func (r *VideoRepository) GetMetadataVideo(ctx context.Context, req *model.GetLi
 	}
 
 	if ctx != nil {
-		err = r.conn.GetContext(ctx, total, query.String(), queryParams...)
+		err = r.conn.GetContext(ctx, &total, query.String(), queryParams...)
 	} else {
-		err = r.conn.Get(total, query.String(), queryParams...)
+		err = r.conn.Get(&total, query.String(), queryParams...)
 	}
 
 	if err != nil {
@@ -100,6 +100,78 @@ func (r *VideoRepository) GetDetailVideo(ctx context.Context, id int64) (*model.
 
 	if err == sql.ErrNoRows {
 		return nil, sql.ErrNoRows
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (r *VideoRepository) GetCategoryNameByID(ctx context.Context, id int64) (*string, error) {
+	var query bytes.Buffer
+	var result *string
+	var err error
+
+	query.WriteString(` SELECT name from categories WHERE id = ? AND type = 'phonebook' AND status = 10 `)
+	if ctx != nil {
+		err = r.conn.GetContext(ctx, &result, query.String(), id)
+	} else {
+		err = r.conn.Get(&result, query.String(), id)
+	}
+
+	if err == sql.ErrNoRows {
+		return nil, sql.ErrNoRows
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (r *VideoRepository) GetLocationNameByID(ctx context.Context, id int64) (*string, error) {
+	var query bytes.Buffer
+	var result *string
+	var err error
+
+	query.WriteString(` SELECT name from areas WHERE id = ?`)
+	if ctx != nil {
+		err = r.conn.GetContext(ctx, &result, query.String(), id)
+	} else {
+		err = r.conn.Get(&result, query.String(), id)
+	}
+
+	if err == sql.ErrNoRows {
+		return nil, sql.ErrNoRows
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (r *VideoRepository) GetVideoStatistic(ctx context.Context) ([]*model.VideoStatistic, error) {
+	var query bytes.Buffer
+	var result = make([]*model.VideoStatistic, 0)
+	var err error
+
+	query.WriteString(`
+		SELECT  c.id, c.name , COUNT(v.category_id) as total 
+		FROM sapawarga.videos v 
+		JOIN sapawarga.categories c  
+		ON c.id = v.category_id 
+		GROUP BY 1, 2
+	`)
+
+	if ctx != nil {
+		err = r.conn.SelectContext(ctx, &result, query.String())
+	} else {
+		err = r.conn.Select(&result, query.String())
 	}
 
 	if err != nil {
