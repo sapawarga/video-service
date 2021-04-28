@@ -7,10 +7,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var configJSONFileName = "./config.json"
+var envFileName = "./.env"
 
 func init() {
-	viper.SetConfigFile(configJSONFileName)
+	viper.SetConfigFile(envFileName)
 	// Enable VIPER to read Environment Variables
 	viper.AutomaticEnv()
 
@@ -33,7 +33,7 @@ func NewConfig() (defConfig *Config, err error) {
 	driverName := viper.GetString(`DB_DRIVER_NAME`)
 
 	if appEnv == "" || appPort == 0 {
-		err = fmt.Errorf("[CONFIG][Critical] Please check section APP on %s", configJSONFileName)
+		err = fmt.Errorf("[CONFIG][Critical] Please check section APP on %s", envFileName)
 		return
 	}
 
@@ -42,7 +42,7 @@ func NewConfig() (defConfig *Config, err error) {
 	defConfig.Debug = debug
 
 	if dbHost == "" || dbPort == 0 || dbUser == "" || dbName == "" || driverName == "" {
-		err = fmt.Errorf("[CONFIG][Critical] Please check section DB on %s", configJSONFileName)
+		err = fmt.Errorf("[CONFIG][Critical] Please check section DB on %s", envFileName)
 		return
 	}
 
