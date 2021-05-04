@@ -1,6 +1,9 @@
 package helper
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 // SetPointerString ...
 func SetPointerString(val string) *string {
@@ -42,4 +45,9 @@ func GetInt64FromPointer(val *int64) int64 {
 // GetTimeFromPointer ...
 func GetTimeFromPointer(val *time.Time) time.Time {
 	return *val
+}
+
+func ConvertFromStringToInt64(val string) (pointerInt64 *int64, plainInt64 int64) {
+	valInt, _ := strconv.ParseInt(val, 10, 64)
+	return &valInt, valInt
 }

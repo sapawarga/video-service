@@ -85,7 +85,7 @@ func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 		}
 
 		return &StatusResponse{
-			Code:    "status_created",
+			Code:    helper.STATUS_CREATED,
 			Message: "video_has_created_successfully",
 		}, nil
 	}
@@ -110,7 +110,7 @@ func MakeUpdateVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 			return nil, err
 		}
 		return &StatusResponse{
-			Code:    "status_updated",
+			Code:    helper.STATUS_UPDATED,
 			Message: "video_has_updated_successfully",
 		}, nil
 	}
@@ -125,7 +125,7 @@ func MakeDeleteVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 		}
 
 		return &StatusResponse{
-			Code:    "status_deleted",
+			Code:    helper.STATUS_DELETED,
 			Message: "video_has_deleted_successfully",
 		}, nil
 	}

@@ -7,4 +7,11 @@ const (
 	DELETED_STRING         = "deleted"
 	INACTIVED_STRING       = "inactived"
 	ACTIVED_STRING         = "actived"
+	HTTP_GET               = "GET"
+	HTTP_PUT               = "PUT"
+	HTTP_POST              = "POST"
+	HTTP_DELETE            = "DELETE"
+	STATUS_CREATED         = "status_created"
+	STATUS_UPDATED         = "status_updated"
+	STATUS_DELETED         = "status_deleted"
 )
