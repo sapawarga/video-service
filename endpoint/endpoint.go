@@ -130,3 +130,12 @@ func MakeDeleteVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 		}, nil
 	}
 }
+
+func MakeCheckHealthy(ctx context.Context) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		return &StatusResponse{
+			Code:    helper.STATUS_OK,
+			Message: "service_is_ok",
+		}, nil
+	}
+}
