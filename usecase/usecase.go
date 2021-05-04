@@ -56,7 +56,7 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 			return nil, err
 		}
 
-		totalPage := int64(math.Floor(float64(helper.GetInt64FromPointer(total) / limit)))
+		totalPage := int64(math.Ceil(float64(helper.GetInt64FromPointer(total) / limit)))
 
 		meta.Page = helper.GetInt64FromPointer(req.Page)
 		meta.TotalPage = totalPage
@@ -163,26 +163,31 @@ func (v *Video) UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) 
 		return err
 	}
 	if data != nil {
-		if req.CategoryID != nil {
-			if _, err = v.repo.GetCategoryNameByID(ctx, helper.GetInt64FromPointer(req.CategoryID)); err != nil {
-				level.Error(logger).Log("error_get_category", err)
-				return err
-			}
-		}
-
-		if req.RegencyID != nil {
-			if _, err = v.repo.GetLocationNameByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
-				level.Error(logger).Log("error_get_regency", err)
-				return err
-			}
-		}
-
-		if err = v.repo.Update(ctx, req); err != nil {
-			level.Error(logger).Log("error_update_video", err)
+		if err = v.updateRegencyOrCategory(ctx, req, data); err != nil {
+			level.Error(logger).Log("error_update_category_or_regency", err)
 			return err
 		}
 	}
 
+	return nil
+}
+
+func (v *Video) updateRegencyOrCategory(ctx context.Context, req *model.UpdateVideoRequest, data *model.VideoResponse) error {
+	if req.CategoryID != nil {
+		if _, err := v.repo.GetCategoryNameByID(ctx, helper.GetInt64FromPointer(req.CategoryID)); err != nil {
+			return err
+		}
+	}
+
+	if req.RegencyID != nil {
+		if _, err := v.repo.GetLocationNameByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
+			return err
+		}
+	}
+
+	if err := v.repo.Update(ctx, req); err != nil {
+		return err
+	}
 	return nil
 }
 
