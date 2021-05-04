@@ -10,8 +10,9 @@ type DB struct {
 }
 
 type Config struct {
-	AppPort int
-	AppEnv  string
-	Debug   bool
-	DB      *DB
+	AppGRPCPort int
+	AppHTTPPort int
+	AppEnv      string
+	Debug       bool
+	DB          *DB
 }
