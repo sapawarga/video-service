@@ -35,15 +35,11 @@ func main() {
 	ctx := context.Background()
 	db := database.NewConnection(config.DB)
 	errChan := make(chan error)
-
-	// setting repository
 	repo := mysql.NewVideoRepository(db)
-
 	logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
 	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
 	uc := usecase.NewVideo(repo, logger)
 
-	// Initialize grpc
 	grpcAdd := flag.String("grpc", fmt.Sprintf(":%d", config.AppGRPCPort), "gRPC listening address")
 	go func() {
 		logger.Log("transport", "grpc", "address", *grpcAdd, "msg", "listening")
@@ -55,27 +51,18 @@ func main() {
 		handler := transportGRPC.MakeHandler(ctx, uc)
 		grpcServer := grpc.NewServer()
 		video.RegisterVideoHandlerServer(grpcServer, handler)
-		logger.Log(
-			"filename", filename,
-			"method", method,
-			"note", "running video service grpc",
-		)
+		logger.Log("filename", filename, "method", method, "note", "running video service grpc")
 		errChan <- grpcServer.Serve(listener)
 	}()
 
 	httpAdd := flag.String("http", fmt.Sprintf(":%d", config.AppHTTPPort), "HTTP listening address")
-	// Initilaize http
 	go func() {
 		logger.Log("transport", "http", "address", *httpAdd, "msg", "listening")
 		mux := http.NewServeMux()
 		ctx := context.Background()
 		mux.Handle("/videos/health", transportHTTP.MakeHealthyCheckHandler(ctx, logger))
 		mux.Handle("/videos/", transportHTTP.MakeHTTPHandler(ctx, uc, logger))
-		logger.Log(
-			"filename", filename,
-			"method", method,
-			"note", "running video service http",
-		)
+		logger.Log("filename", filename, "method", method, "note", "running video service http")
 		errChan <- http.ListenAndServe(*httpAdd, accessControl(mux))
 	}()
 
