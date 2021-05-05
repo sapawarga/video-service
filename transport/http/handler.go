@@ -45,6 +45,7 @@ func MakeHTTPHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Log
 
 	r := mux.NewRouter()
 
+	// TODO: handle token middleware
 	r.Handle("/videos/", processVideoGetList).Methods(helper.HTTP_GET)
 	r.Handle("/videos/{id}", processGetDetailVideo).Methods(helper.HTTP_GET)
 	r.Handle("/videos/statistic", processGetVideoStatistic).Methods(helper.HTTP_GET)
@@ -58,6 +59,7 @@ func MakeHTTPHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Log
 func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, error) {
 	regIDString := r.URL.Query().Get("regency_id")
 	pageString := r.URL.Query().Get("page")
+
 	if pageString == "0" || pageString == "" {
 		pageString = "1"
 	}
