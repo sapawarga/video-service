@@ -58,6 +58,9 @@ func MakeHTTPHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Log
 func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, error) {
 	regIDString := r.URL.Query().Get("regency_id")
 	pageString := r.URL.Query().Get("page")
+	if pageString == "0" || pageString == "" {
+		pageString = "1"
+	}
 	regID, _ := helper.ConvertFromStringToInt64(regIDString)
 	pageInt, _ := helper.ConvertFromStringToInt64(pageString)
 	request := &endpoint.GetVideoRequest{
@@ -108,10 +111,14 @@ func encodeResponse(ctx context.Context, w http.ResponseWriter, response interfa
 		return nil
 	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if response.(*endpoint.StatusResponse).Code == helper.STATUS_CREATED {
-		w.WriteHeader(http.StatusCreated)
-	} else if response.(*endpoint.StatusResponse).Code == helper.STATUS_UPDATED || response.(*endpoint.StatusResponse).Code == helper.STATUS_DELETED {
-		w.WriteHeader(http.StatusNoContent)
+
+	status, ok := response.(*endpoint.StatusResponse)
+	if ok {
+		if status.Code == helper.STATUS_CREATED {
+			w.WriteHeader(http.StatusCreated)
+		} else if status.Code == helper.STATUS_UPDATED || status.Code == helper.STATUS_DELETED {
+			w.WriteHeader(http.StatusNoContent)
+		}
 	} else {
 		w.WriteHeader(http.StatusOK)
 	}

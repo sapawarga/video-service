@@ -28,14 +28,13 @@ func NewVideo(repo repository.DatabaseI, logger kitlog.Logger) *Video {
 func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest) (*model.VideoWithMetadata, error) {
 	logger := kitlog.With(v.logger, "method", "GetListVideo")
 
-	var limit, offset int64 = 0, 0
-	if req.Page != nil {
-		limit = 10
+	var limit, offset int64 = 10, 0
+	if req.Page != nil && *req.Page > 1 {
 		offset = (helper.GetInt64FromPointer(req.Page) - 1) * limit
 	}
 	request := &model.GetListVideoRepoRequest{
-		RegencyID: req.RegencyID,
-		Offset:    helper.SetPointerInt64(offset),
+		RegencyID: helper.SetPointerInt64(*req.RegencyID),
+		Offset:    &offset,
 	}
 	if limit > 0 {
 		request.Limit = helper.SetPointerInt64(limit)
@@ -46,6 +45,7 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 		level.Error(logger).Log("error_get_list", err)
 		return nil, err
 	}
+	videos := v.appendVideoData(ctx, resp)
 
 	meta := &model.Metadata{}
 
@@ -64,7 +64,7 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 	}
 
 	return &model.VideoWithMetadata{
-		Data:     resp,
+		Data:     videos,
 		Metadata: meta,
 	}, nil
 }
@@ -207,4 +207,25 @@ func (v *Video) DeleteVideo(ctx context.Context, id int64) error {
 	}
 
 	return nil
+}
+
+func (v *Video) appendVideoData(ctx context.Context, data []*model.VideoResponse) []*model.Video {
+	result := make([]*model.Video, 0)
+	for _, v := range data {
+		video := &model.Video{
+			ID:         v.ID,
+			Title:      v.Title.String,
+			CategoryID: v.CategoryID.Int64,
+			Source:     v.Source.String,
+			VideoURL:   v.VideoURL.String,
+			RegencyID:  v.RegencyID.Int64,
+			Status:     v.Status.Int64,
+			CreatedAt:  v.CreatedAt.Time,
+			UpdatedAt:  v.UpdatedAt.Time,
+			CreatedBy:  v.CreatedBy.Int64,
+			UpdatedBy:  v.UpdatedBy.Int64,
+		}
+		result = append(result, video)
+	}
+	return result
 }

@@ -73,16 +73,16 @@ func encodingGetListVideoResponse(ctx context.Context, r interface{}) (interface
 	for _, v := range resp.Data {
 		video := &transportVideo.VideoList{
 			Id:         v.ID,
-			Title:      v.Title.String,
-			CategoryId: v.CategoryID.Int64,
-			Source:     v.Source.String,
-			VideoUrl:   v.VideoURL.String,
-			RegencyId:  v.RegencyID.Int64,
-			Status:     v.Status.Int64,
-			CreatedAt:  v.CreatedAt.Time.String(),
-			UpdatedAt:  v.UpdatedAt.Time.String(),
-			CreatedBy:  v.CreatedBy.Int64,
-			UpdatedBy:  v.UpdatedBy.Int64,
+			Title:      v.Title,
+			CategoryId: v.CategoryID,
+			Source:     v.Source,
+			VideoUrl:   v.VideoURL,
+			RegencyId:  v.RegencyID,
+			Status:     v.Status,
+			CreatedAt:  v.CreatedAt.String(),
+			UpdatedAt:  v.UpdatedAt.String(),
+			CreatedBy:  v.CreatedBy,
+			UpdatedBy:  v.UpdatedBy,
 		}
 		videoResp = append(videoResp, video)
 	}

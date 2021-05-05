@@ -37,6 +37,34 @@ var videoResponses = []*model.VideoResponse{
 	},
 }
 
+var videoUsecase = []*model.Video{
+	{
+		ID:         1,
+		Title:      "Test Video 1",
+		CategoryID: 1,
+		Source:     "youtube",
+		VideoURL:   "https://youtube.com/UDOHE",
+		RegencyID:  1,
+		Status:     10,
+		CreatedAt:  currentTime,
+		UpdatedAt:  currentTime,
+		CreatedBy:  1,
+		UpdatedBy:  1,
+	}, {
+		ID:         2,
+		Title:      "Test Video 2",
+		CategoryID: 1,
+		Source:     "youtube",
+		VideoURL:   "https://youtube.com/UDOHE",
+		RegencyID:  1,
+		Status:     10,
+		CreatedAt:  currentTime,
+		UpdatedAt:  currentTime,
+		CreatedBy:  1,
+		UpdatedBy:  1,
+	},
+}
+
 type ResponseGetListVideo struct {
 	Result []*model.VideoResponse
 	Error  error
@@ -88,7 +116,7 @@ var GetListVideoData = []GetListVideo{
 		},
 		MockUsecaseResponse: ResponseUsecase{
 			Result: &model.VideoWithMetadata{
-				Data: videoResponses,
+				Data: videoUsecase,
 				Metadata: &model.Metadata{
 					Page:      1,
 					TotalPage: 1,

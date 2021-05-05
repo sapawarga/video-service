@@ -7,8 +7,8 @@ import (
 )
 
 type VideoResponse struct {
-	Data     []*model.VideoResponse `json:"data"`
-	Metadata *model.Metadata        `json:"metadata"`
+	Data     []*model.Video  `json:"data"`
+	Metadata *model.Metadata `json:"metadata"`
 }
 
 type VideoDetail struct {
