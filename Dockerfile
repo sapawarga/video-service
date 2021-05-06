@@ -30,9 +30,9 @@ WORKDIR /app
 RUN apk --update add tzdata ca-certificates && \
     update-ca-certificates 2>/dev/null || true 
 
-COPY --from=compile-image ${PROJECT_PATH}/video-service-grpc /app/video-service-grpc
+COPY --from=compile-image ${PROJECT_PATH}/video-service /app/video-service
 COPY --from=compile-image ${PROJECT_PATH}/.env /app/.env
 
-EXPOSE 3001
+EXPOSE 3001 3002
 
-ENTRYPOINT [ "/app/video-service-grpc" ]
+ENTRYPOINT [ "/app/video-service" ]

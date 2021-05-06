@@ -16,4 +16,5 @@
 
 config.json
 video-service-grpc
+video-service
 .env

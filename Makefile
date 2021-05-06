@@ -44,8 +44,8 @@ test:
 
 build:
 	@GOOS=linux GOARCH=amd64
-	@echo ">> Building GRPC..."
-	@go build -o video-service-grpc ./cmd/server
+	@echo ">> Building Executable..."
+	@go build -o video-service ./cmd/server
 	@echo ">> Finished"
 
 run:
