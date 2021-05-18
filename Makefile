@@ -49,4 +49,4 @@ build:
 	@echo ">> Finished"
 
 run:
-	@./video-service-grpc
+	@./video-service
