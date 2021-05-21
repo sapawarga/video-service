@@ -11,8 +11,8 @@ services:
     env_file:
       - .env
     ports:
-      - 3001:3001
-      - 3002:3002
+      - 9003:9003
+      - 9004:9004
 
   # database:
   #   image: registry.gitlab.com/jdsteam/sapa-warga/sapawarga-app/sapawarga-backend-database:dev 
