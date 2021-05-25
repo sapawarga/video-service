@@ -47,8 +47,8 @@ func MakeHTTPHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Log
 
 	// TODO: handle token middleware
 	r.Handle("/videos/", processVideoGetList).Methods(helper.HTTP_GET)
-	r.Handle("/videos/{id}", processGetDetailVideo).Methods(helper.HTTP_GET)
 	r.Handle("/videos/statistic", processGetVideoStatistic).Methods(helper.HTTP_GET)
+	r.Handle("/videos/{id}", processGetDetailVideo).Methods(helper.HTTP_GET)
 	r.Handle("/videos/", processCreateVideo).Methods(helper.HTTP_POST)
 	r.Handle("/videos/{id}", processUpdateVideo).Methods(helper.HTTP_PUT)
 	r.Handle("/videos/{id}", processDeleteVideo).Methods(helper.HTTP_DELETE)
@@ -120,6 +120,7 @@ func encodeResponse(ctx context.Context, w http.ResponseWriter, response interfa
 			w.WriteHeader(http.StatusCreated)
 		} else if status.Code == helper.STATUS_UPDATED || status.Code == helper.STATUS_DELETED {
 			w.WriteHeader(http.StatusNoContent)
+			return json.NewEncoder(w).Encode(nil)
 		}
 	} else {
 		w.WriteHeader(http.StatusOK)

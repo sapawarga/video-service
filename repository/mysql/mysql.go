@@ -165,8 +165,8 @@ func (r *VideoRepository) GetVideoStatistic(ctx context.Context) ([]*model.Video
 
 	query.WriteString(`
 		SELECT  c.id, c.name , COUNT(v.category_id) as count 
-		FROM sapawarga.videos v 
-		JOIN sapawarga.categories c  
+		FROM videos v 
+		JOIN categories c  
 		ON c.id = v.category_id 
 		GROUP BY 1, 2
 	`)
@@ -188,12 +188,13 @@ func (r *VideoRepository) Insert(ctx context.Context, params *model.CreateVideoR
 	var query bytes.Buffer
 	var err error
 	_, current := helper.GetCurrentTimeUTC()
-
+	// TODO: actor is from authenticator
+	actor := 1
 	query.WriteString("INSERT INTO videos")
 	query.WriteString(`
-		(category_id, title, source, video_url, kabkota_id, seq, status, created_at, updated_at)`)
+		(category_id, title, source, video_url, kabkota_id, seq, status, created_by, created_at, updated_by, updated_at)`)
 	query.WriteString(`VALUES(
-		:category_id, :title, :source, :video_url, :kabkota_id, 1, :status, :created_at, :updated_at)`)
+		:category_id, :title, :source, :video_url, :kabkota_id, 1, :status, :actor, :created_at, :actor, :updated_at)`)
 	queryParams := map[string]interface{}{
 		"category_id": params.CategoryID,
 		"title":       params.Title,
@@ -202,6 +203,7 @@ func (r *VideoRepository) Insert(ctx context.Context, params *model.CreateVideoR
 		"kabkota_id":  params.RegencyID,
 		"status":      params.Status,
 		"created_at":  current,
+		"actor":       actor,
 		"updated_at":  current,
 	}
 

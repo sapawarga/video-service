@@ -39,7 +39,7 @@ type UpdateVideoRequest struct {
 func ValidateInputs(in interface{}) error {
 	if obj, ok := in.(*CreateVideoRequest); ok {
 		return validation.ValidateStruct(obj,
-			validation.Field(&obj.Title, validation.Required, validation.Length(0, 10)),
+			validation.Field(&obj.Title, validation.Required, validation.Length(10, 0)),
 			validation.Field(&obj.Source, validation.Required, validation.In("youtube")),
 			validation.Field(&obj.CategoryID, validation.Required),
 			validation.Field(&obj.VideoURL, validation.Required, validation.Match(regexp.MustCompile("^(https://www.youtube.com/).+$"))),
@@ -48,7 +48,7 @@ func ValidateInputs(in interface{}) error {
 	} else if obj, ok := in.(*UpdateVideoRequest); ok {
 		return validation.ValidateStruct(obj,
 			validation.Field(&obj.ID, validation.Required),
-			validation.Field(&obj.Title, validation.Length(0, 10)),
+			validation.Field(&obj.Title, validation.Length(10, 0)),
 			validation.Field(&obj.Source, validation.In("youtube")),
 			validation.Field(&obj.CategoryID),
 			validation.Field(&obj.VideoURL, validation.Match(regexp.MustCompile("^(https://www.youtube.com/).+$"))),
