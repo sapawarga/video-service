@@ -7,7 +7,7 @@ import (
 	"reflect"
 
 	"github.com/golang/mock/gomock"
-	"github.com/sapawarga/video-service/mocks"
+	mock_repository "github.com/sapawarga/video-service/mocks"
 	"github.com/sapawarga/video-service/mocks/testcases"
 	"github.com/sapawarga/video-service/usecase"
 
@@ -19,7 +19,7 @@ import (
 
 var _ = Describe("Usecase", func() {
 	var (
-		mockVideoRepo *mocks.MockDatabaseI
+		mockVideoRepo *mock_repository.MockDatabaseI
 		video         usecase.UsecaseI
 	)
 
@@ -27,7 +27,7 @@ var _ = Describe("Usecase", func() {
 		logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
 		mockSvc := gomock.NewController(GinkgoT())
 		mockSvc.Finish()
-		mockVideoRepo = mocks.NewMockDatabaseI(mockSvc)
+		mockVideoRepo = mock_repository.NewMockDatabaseI(mockSvc)
 		video = usecase.NewVideo(mockVideoRepo, logger)
 	})
 
@@ -114,6 +114,17 @@ var _ = Describe("Usecase", func() {
 		}
 	}
 
+	var CheckReadinessLogic = func(idx int) {
+		ctx := context.Background()
+		data := testcases.CheckReadinessData[idx]
+		mockVideoRepo.EXPECT().HealthCheckReadiness(ctx).Return(data.MockCheckReadiness).Times(1)
+		if err := video.CheckHealthReadiness(ctx); err != nil {
+			Expect(err).NotTo(BeNil())
+		} else {
+			Expect(err).To(BeNil())
+		}
+	}
+
 	var unitTestLogic = map[string]map[string]interface{}{
 		"GetListVideo":      {"func": GetListVideoLogic, "test_case_count": len(testcases.GetListVideoData), "desc": testcases.ListVideoDescription()},
 		"GetDetailVideo":    {"func": GetDetailVideoLogic, "test_case_count": len(testcases.GetDetailVideoData), "desc": testcases.DetailVideoDescription()},
@@ -121,6 +132,7 @@ var _ = Describe("Usecase", func() {
 		"CreateNewVideo":    {"func": CreateNewVideoLogic, "test_case_count": len(testcases.CreateNewVideoData), "desc": testcases.CreateNewVideoDescription()},
 		"UpdateVideo":       {"func": UpdateVideoLogic, "test_case_count": len(testcases.CreateNewVideoData), "desc": testcases.UpdateVideoDescription()},
 		"DeleteVideo":       {"func": DeleteVideoLogic, "test_case_count": len(testcases.DeleteVideoData), "desc": testcases.DeleteVideoDescription()},
+		"CheckReadiness":    {"func": CheckReadinessLogic, "test_case_count": len(testcases.CheckReadinessData), "desc": testcases.CheckReadinessDescription()},
 	}
 
 	for _, val := range unitTestLogic {

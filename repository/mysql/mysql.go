@@ -306,3 +306,18 @@ func (r *VideoRepository) Delete(ctx context.Context, id int64) error {
 
 	return nil
 }
+
+func (r *VideoRepository) HealthCheckReadiness(ctx context.Context) error {
+	var err error
+	if ctx != nil {
+		err = r.conn.PingContext(ctx)
+	} else {
+		err = r.conn.Ping()
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

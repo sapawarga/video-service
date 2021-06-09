@@ -20,4 +20,6 @@ type DatabaseI interface {
 	Update(ctx context.Context, params *model.UpdateVideoRequest) error
 	// query delete
 	Delete(ctx context.Context, id int64) error
+	// health check readiness
+	HealthCheckReadiness(ctx context.Context) error
 }
