@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"math"
 
 	"github.com/sapawarga/video-service/model"
@@ -206,6 +207,15 @@ func (v *Video) DeleteVideo(ctx context.Context, id int64) error {
 		}
 	}
 
+	return nil
+}
+
+func (v *Video) CheckHealthReadiness(ctx context.Context) error {
+	logger := kitlog.With(v.logger, "method", "CheckHealthReadiness")
+	if err := v.repo.HealthCheckReadiness(ctx); err != nil {
+		level.Error(logger).Log("error", errors.New("service_not_ready"))
+		return errors.New("service_not_ready")
+	}
 	return nil
 }
 

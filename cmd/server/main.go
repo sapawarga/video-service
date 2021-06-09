@@ -60,7 +60,7 @@ func main() {
 		logger.Log("transport", "http", "address", *httpAdd, "msg", "listening")
 		mux := http.NewServeMux()
 		ctx := context.Background()
-		mux.Handle("/videos/health", transportHTTP.MakeHealthyCheckHandler(ctx, logger))
+		mux.Handle("/health/", transportHTTP.MakeHealthyCheckHandler(ctx, uc, logger))
 		mux.Handle("/videos/", transportHTTP.MakeHTTPHandler(ctx, uc, logger))
 		logger.Log("filename", filename, "method", method, "note", "running video service http")
 		errChan <- http.ListenAndServe(*httpAdd, accessControl(mux))

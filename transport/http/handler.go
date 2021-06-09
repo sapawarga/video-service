@@ -19,14 +19,15 @@ type err interface {
 	error() error
 }
 
-func MakeHealthyCheckHandler(ctx context.Context, logger kitlog.Logger) http.Handler {
+func MakeHealthyCheckHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Logger) http.Handler {
 	opts := []kithttp.ServerOption{
 		kithttp.ServerErrorHandler(transport.NewLogErrorHandler(logger)),
 		kithttp.ServerErrorEncoder(encodeError),
 	}
 
 	r := mux.NewRouter()
-	r.Handle("/videos/healthy", kithttp.NewServer(endpoint.MakeCheckHealthy(ctx), decodeNoRequest, encodeResponse, opts...)).Methods(helper.HTTP_GET)
+	r.Handle("/health/live", kithttp.NewServer(endpoint.MakeCheckHealthy(ctx), decodeNoRequest, encodeResponse, opts...)).Methods(helper.HTTP_GET)
+	r.Handle("/health/ready", kithttp.NewServer(endpoint.MakeCheckReadiness(ctx, fs), decodeNoRequest, encodeResponse, opts...)).Methods(helper.HTTP_GET)
 	return r
 }
 

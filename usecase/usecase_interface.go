@@ -13,4 +13,5 @@ type UsecaseI interface {
 	CreateNewVideo(ctx context.Context, req *model.CreateVideoRequest) error
 	UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) error
 	DeleteVideo(ctx context.Context, id int64) error
+	CheckHealthReadiness(ctx context.Context) error
 }
