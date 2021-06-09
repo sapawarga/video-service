@@ -26,8 +26,8 @@ func MakeHealthyCheckHandler(ctx context.Context, fs usecase.UsecaseI, logger ki
 	}
 
 	r := mux.NewRouter()
-	r.Handle("/videos/health/live", kithttp.NewServer(endpoint.MakeCheckHealthy(ctx), decodeNoRequest, encodeResponse, opts...)).Methods(helper.HTTP_GET)
-	r.Handle("/videos/health/ready", kithttp.NewServer(endpoint.MakeCheckReadiness(ctx, fs), decodeNoRequest, encodeResponse, opts...)).Methods(helper.HTTP_GET)
+	r.Handle("/health/live", kithttp.NewServer(endpoint.MakeCheckHealthy(ctx), decodeNoRequest, encodeResponse, opts...)).Methods(helper.HTTP_GET)
+	r.Handle("/health/ready", kithttp.NewServer(endpoint.MakeCheckReadiness(ctx, fs), decodeNoRequest, encodeResponse, opts...)).Methods(helper.HTTP_GET)
 	return r
 }
 
