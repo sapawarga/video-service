@@ -11,6 +11,7 @@ import (
 type GetVideoRequest struct {
 	RegencyID *int64 `json:"regency_id"`
 	Page      *int64 `json:"page"`
+	Limit     *int64 `json:"limit"`
 }
 
 type RequestID struct {

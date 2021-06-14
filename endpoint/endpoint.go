@@ -15,6 +15,7 @@ func MakeGetListVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoin
 		resp, err := fs.GetListVideo(ctx, &model.GetListVideoRequest{
 			RegencyID: req.RegencyID,
 			Page:      req.Page,
+			Limit:     req.Limit,
 		})
 		if err != nil {
 			return nil, err
