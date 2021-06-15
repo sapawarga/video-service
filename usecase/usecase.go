@@ -30,15 +30,17 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 	logger := kitlog.With(v.logger, "method", "GetListVideo")
 
 	var limit, offset int64 = 10, 0
+	if req.Limit != nil {
+		limit = helper.GetInt64FromPointer(req.Limit)
+	}
 	if req.Page != nil && *req.Page > 1 {
 		offset = (helper.GetInt64FromPointer(req.Page) - 1) * limit
 	}
+
 	request := &model.GetListVideoRepoRequest{
 		RegencyID: helper.SetPointerInt64(*req.RegencyID),
 		Offset:    &offset,
-	}
-	if limit > 0 {
-		request.Limit = helper.SetPointerInt64(limit)
+		Limit:     &limit,
 	}
 
 	resp, err := v.repo.GetListVideo(ctx, request)

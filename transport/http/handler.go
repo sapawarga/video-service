@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/sapawarga/video-service/endpoint"
 	"github.com/sapawarga/video-service/helper"
@@ -60,15 +61,21 @@ func MakeHTTPHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Log
 func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, error) {
 	regIDString := r.URL.Query().Get("regency_id")
 	pageString := r.URL.Query().Get("page")
+	limitString := r.URL.Query().Get("limit")
 
 	if pageString == "0" || pageString == "" {
 		pageString = "1"
 	}
+	if limitString == "" || limitString == "0" {
+		limitString = "10"
+	}
 	regID, _ := helper.ConvertFromStringToInt64(regIDString)
 	pageInt, _ := helper.ConvertFromStringToInt64(pageString)
+	limit, _ := helper.ConvertFromStringToInt64(limitString)
 	request := &endpoint.GetVideoRequest{
 		RegencyID: regID,
 		Page:      pageInt,
+		Limit:     limit,
 	}
 
 	return request, nil
@@ -131,7 +138,11 @@ func encodeResponse(ctx context.Context, w http.ResponseWriter, response interfa
 
 func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusBadRequest)
+	w.WriteHeader(http.StatusInternalServerError)
+
+	if strings.ContainsAny(err.Error(), "error") {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+	}
 
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"error": err.Error(),

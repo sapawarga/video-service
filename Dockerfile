@@ -1,4 +1,4 @@
-FROM golang:1.15-alpine3.12 AS compile-image
+FROM registry.digitalservice.id/proxyjds/library/golang:1.15-alpine3.12 AS compile-image
 
 RUN apk --no-cache add gcc g++ make ca-certificates git
 # Set necessary environmet variables needed for our image
