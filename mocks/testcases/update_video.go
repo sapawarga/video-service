@@ -45,7 +45,7 @@ var UpdateVideoData = []UpdateVideo{
 			Error:  nil,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockVideoDetail: ResponseGetDetailVideo{
@@ -87,7 +87,7 @@ var UpdateVideoData = []UpdateVideo{
 			Error:  sql.ErrNoRows,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockVideoDetail: ResponseGetDetailVideo{
@@ -108,7 +108,7 @@ var UpdateVideoData = []UpdateVideo{
 			Error:  nil,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockVideoDetail: ResponseGetDetailVideo{
@@ -129,7 +129,7 @@ var UpdateVideoData = []UpdateVideo{
 			Error:  nil,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockVideoDetail: ResponseGetDetailVideo{

@@ -49,9 +49,9 @@ func MakeHTTPHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Log
 
 	// TODO: handle token middleware
 	r.Handle("/videos/", processVideoGetList).Methods(helper.HTTP_GET)
+	r.Handle("/videos/", processCreateVideo).Methods(helper.HTTP_POST)
 	r.Handle("/videos/statistic", processGetVideoStatistic).Methods(helper.HTTP_GET)
 	r.Handle("/videos/{id}", processGetDetailVideo).Methods(helper.HTTP_GET)
-	r.Handle("/videos/", processCreateVideo).Methods(helper.HTTP_POST)
 	r.Handle("/videos/{id}", processUpdateVideo).Methods(helper.HTTP_PUT)
 	r.Handle("/videos/{id}", processDeleteVideo).Methods(helper.HTTP_DELETE)
 
@@ -138,10 +138,11 @@ func encodeResponse(ctx context.Context, w http.ResponseWriter, response interfa
 
 func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusInternalServerError)
 
 	if strings.ContainsAny(err.Error(), "error") {
 		w.WriteHeader(http.StatusUnprocessableEntity)
+	} else {
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 
 	json.NewEncoder(w).Encode(map[string]interface{}{

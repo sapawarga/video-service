@@ -7,24 +7,30 @@ import (
 )
 
 type VideoResponse struct {
-	Data     []*model.Video  `json:"data"`
-	Metadata *model.Metadata `json:"metadata"`
+	Data     []*model.Video  `json:"items"`
+	Metadata *model.Metadata `json:"_meta"`
 }
 
 type VideoDetail struct {
-	ID           int64
-	Title        string
-	CategoryID   *int64
-	CategoryName *string
-	Source       string
-	VideoURL     string
-	RegencyID    *int64
-	RegencyName  *string
-	Status       int64
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *int64
-	UpdatedBy    *int64
+	ID                 int64           `json:"id"`
+	Title              string          `json:"title"`
+	Cateogry           *model.Category `json:"category"`
+	Source             string          `json:"source"`
+	VideoURL           string          `json:"video_url"`
+	TotalLikes         int64           `json:"total_likes,omitempty"`
+	IsPushNotification int64           `json:"is_push_notification"`
+	RegencyID          *int64          `json:"kabkota_id,omitempty"`
+	RegencyName        *string         `json:"kabkota,omitempty"`
+	Status             int64           `json:"status"`
+	CreatedAt          *time.Time      `json:"created_at"`
+	UpdatedAt          *time.Time      `json:"updated_at"`
+	CreatedBy          *int64          `json:"created_by"`
+	UpdatedBy          *int64          `json:"updated_by"`
+}
+
+// VideoWithMeta ...
+type VideoWithMeta struct {
+	Data *VideoResponse `json:"data"`
 }
 
 type VideoStatisticResponse struct {

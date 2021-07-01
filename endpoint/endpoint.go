@@ -21,9 +21,11 @@ func MakeGetListVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoin
 			return nil, err
 		}
 
-		return &VideoResponse{
-			Data:     resp.Data,
-			Metadata: resp.Metadata,
+		return &VideoWithMeta{
+			Data: &VideoResponse{
+				Data:     resp.Data,
+				Metadata: resp.Metadata,
+			},
 		}, nil
 	}
 }
@@ -37,19 +39,18 @@ func MakeGetDetailVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 		}
 
 		return &VideoDetail{
-			ID:           resp.ID,
-			Title:        resp.Title,
-			CategoryID:   resp.CategoryID,
-			CategoryName: resp.CategoryName,
-			Source:       resp.Source,
-			VideoURL:     resp.VideoURL,
-			RegencyID:    resp.RegencyID,
-			RegencyName:  resp.RegencyName,
-			Status:       resp.Status,
-			CreatedAt:    resp.CreatedAt,
-			UpdatedAt:    resp.UpdatedAt,
-			CreatedBy:    resp.CreatedBy,
-			UpdatedBy:    resp.UpdatedBy,
+			ID:          resp.ID,
+			Title:       resp.Title,
+			Cateogry:    resp.Category,
+			Source:      resp.Source,
+			VideoURL:    resp.VideoURL,
+			RegencyID:   resp.RegencyID,
+			RegencyName: resp.RegencyName,
+			Status:      resp.Status,
+			CreatedAt:   resp.CreatedAt,
+			UpdatedAt:   resp.UpdatedAt,
+			CreatedBy:   resp.CreatedBy,
+			UpdatedBy:   resp.UpdatedBy,
 		}, nil
 	}
 }
