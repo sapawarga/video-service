@@ -41,7 +41,7 @@ var CreateNewVideoData = []CreateNewVideo{
 			Error:  nil,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockRepository: nil,
@@ -73,7 +73,7 @@ var CreateNewVideoData = []CreateNewVideo{
 			Error:  sql.ErrNoRows,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockRepository: nil,
@@ -89,7 +89,7 @@ var CreateNewVideoData = []CreateNewVideo{
 			Error:  nil,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockRepository: errors.New("something_went_wrong"),

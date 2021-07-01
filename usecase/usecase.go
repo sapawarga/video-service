@@ -28,7 +28,6 @@ func NewVideo(repo repository.DatabaseI, logger kitlog.Logger) *Video {
 
 func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest) (*model.VideoWithMetadata, error) {
 	logger := kitlog.With(v.logger, "method", "GetListVideo")
-
 	var limit, offset int64 = 10, 0
 	if req.Limit != nil {
 		limit = helper.GetInt64FromPointer(req.Limit)
@@ -48,8 +47,11 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 		level.Error(logger).Log("error_get_list", err)
 		return nil, err
 	}
-	videos := v.appendVideoData(ctx, resp)
-
+	videos, err := v.appendVideoData(ctx, resp)
+	if err != nil {
+		level.Error(logger).Log("error_append_list", err)
+		return nil, err
+	}
 	meta := &model.Metadata{}
 
 	if req.Page != nil {
@@ -59,8 +61,7 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 			return nil, err
 		}
 
-		totalPage := int64(math.Ceil(float64(helper.GetInt64FromPointer(total) / limit)))
-
+		totalPage := math.Ceil(float64(helper.GetInt64FromPointer(total)) / float64(limit))
 		meta.Page = helper.GetInt64FromPointer(req.Page)
 		meta.TotalPage = totalPage
 		meta.Total = helper.GetInt64FromPointer(total)
@@ -98,8 +99,10 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 			level.Error(logger).Log("error_get_category", err)
 			return nil, err
 		}
-		result.CategoryID = helper.SetPointerInt64(resp.CategoryID.Int64)
-		result.CategoryName = name
+		result.Category = &model.Category{
+			ID:   resp.CategoryID.Int64,
+			Name: helper.GetStringFromPointer(name),
+		}
 	}
 	if resp.RegencyID.Valid {
 		name, err := v.repo.GetLocationNameByID(ctx, resp.RegencyID.Int64)
@@ -221,23 +224,32 @@ func (v *Video) CheckHealthReadiness(ctx context.Context) error {
 	return nil
 }
 
-func (v *Video) appendVideoData(ctx context.Context, data []*model.VideoResponse) []*model.Video {
+func (v *Video) appendVideoData(ctx context.Context, data []*model.VideoResponse) ([]*model.Video, error) {
 	result := make([]*model.Video, 0)
-	for _, v := range data {
+	for _, video := range data {
+		categoryName, err := v.repo.GetCategoryNameByID(ctx, video.CategoryID.Int64)
+		if err != nil {
+			return nil, err
+		}
 		video := &model.Video{
-			ID:         v.ID,
-			Title:      v.Title.String,
-			CategoryID: v.CategoryID.Int64,
-			Source:     v.Source.String,
-			VideoURL:   v.VideoURL.String,
-			RegencyID:  v.RegencyID.Int64,
-			Status:     v.Status.Int64,
-			CreatedAt:  v.CreatedAt.Time,
-			UpdatedAt:  v.UpdatedAt.Time,
-			CreatedBy:  v.CreatedBy.Int64,
-			UpdatedBy:  v.UpdatedBy.Int64,
+			ID:    video.ID,
+			Title: video.Title.String,
+			Category: &model.Category{
+				ID:   video.CategoryID.Int64,
+				Name: helper.GetStringFromPointer(categoryName),
+			},
+			Source:             video.Source.String,
+			VideoURL:           video.VideoURL.String,
+			RegencyID:          video.RegencyID.Int64,
+			IsPushNotification: helper.ConvertBoolFromInteger(video.IsPushNotification.Int64),
+			TotalLikes:         video.TotalLikes.Int64,
+			Status:             video.Status.Int64,
+			CreatedAt:          video.CreatedAt.Time,
+			UpdatedAt:          video.UpdatedAt.Time,
+			CreatedBy:          video.CreatedBy.Int64,
+			UpdatedBy:          video.UpdatedBy.Int64,
 		}
 		result = append(result, video)
 	}
-	return result
+	return result, nil
 }

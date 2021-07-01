@@ -8,39 +8,45 @@ type VideoWithMetadata struct {
 }
 
 type Metadata struct {
-	Page      int64
-	TotalPage int64
-	Total     int64
+	Page        int64
+	TotalPage   float64
+	CurrentPage int64
+	Total       int64
 }
 
 type Video struct {
-	ID         int64     `json:"id"`
-	Title      string    `json:"title,omitempty"`
-	CategoryID int64     `json:"category_id,omitempty"`
-	Source     string    `json:"source,omitempty"`
-	VideoURL   string    `json:"video_url,omitempty"`
-	RegencyID  int64     `json:"regency_id,omitempty"`
-	Status     int64     `json:"status"`
-	CreatedAt  time.Time `json:"created_at,omitempty"`
-	UpdatedAt  time.Time `json:"updated_at,omitempty"`
-	CreatedBy  int64     `json:"created_by,omitempty"`
-	UpdatedBy  int64     `json:"updated_by,omitempty"`
+	ID                 int64     `json:"id"`
+	Title              string    `json:"title,omitempty"`
+	Category           *Category `json:"category,omitempty"`
+	Source             string    `json:"source,omitempty"`
+	VideoURL           string    `json:"video_url,omitempty"`
+	RegencyID          int64     `json:"regency_id,omitempty"`
+	IsPushNotification bool      `json:"is_push_notification,omitempty"`
+	TotalLikes         int64     `json:"total_likes"`
+	Status             int64     `json:"status"`
+	CreatedAt          time.Time `json:"created_at,omitempty"`
+	UpdatedAt          time.Time `json:"updated_at,omitempty"`
+	CreatedBy          int64     `json:"created_by,omitempty"`
+	UpdatedBy          int64     `json:"updated_by,omitempty"`
 }
 
+type Category struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
 type VideoDetail struct {
-	ID           int64
-	Title        string
-	CategoryID   *int64
-	CategoryName *string
-	Source       string
-	VideoURL     string
-	RegencyID    *int64
-	RegencyName  *string
-	Status       int64
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *int64
-	UpdatedBy    *int64
+	ID          int64
+	Title       string
+	Category    *Category
+	Source      string
+	VideoURL    string
+	RegencyID   *int64
+	RegencyName *string
+	Status      int64
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *int64
+	UpdatedBy   *int64
 }
 
 type VideoStatisticWithMetadata struct {

@@ -74,7 +74,7 @@ func encodingGetListVideoResponse(ctx context.Context, r interface{}) (interface
 		video := &transportVideo.VideoList{
 			Id:         v.ID,
 			Title:      v.Title,
-			CategoryId: v.CategoryID,
+			CategoryId: v.Category.ID,
 			Source:     v.Source,
 			VideoUrl:   v.VideoURL,
 			RegencyId:  v.RegencyID,
@@ -88,9 +88,8 @@ func encodingGetListVideoResponse(ctx context.Context, r interface{}) (interface
 	}
 
 	metadata := &transportVideo.Metadata{
-		Page:      resp.Metadata.Page,
-		TotalPage: resp.Metadata.TotalPage,
-		Total:     resp.Metadata.Total,
+		Page:  resp.Metadata.Page,
+		Total: resp.Metadata.Total,
 	}
 
 	return &transportVideo.GetListVideoResponse{
@@ -111,8 +110,8 @@ func encodingGetDetailResponse(ctx context.Context, r interface{}) (interface{},
 	return &transportVideo.GetDetailVideoResponse{
 		Id:           resp.ID,
 		Title:        resp.Title,
-		CategoryId:   helper.GetInt64FromPointer(resp.CategoryID),
-		CategoryName: helper.GetStringFromPointer(resp.CategoryName),
+		CategoryId:   resp.Cateogry.ID,
+		CategoryName: resp.Cateogry.Name,
 		Source:       resp.Source,
 		VideoUrl:     resp.VideoURL,
 		RegencyId:    helper.GetInt64FromPointer(resp.RegencyID),

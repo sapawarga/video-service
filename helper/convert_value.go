@@ -47,7 +47,13 @@ func GetTimeFromPointer(val *time.Time) time.Time {
 	return *val
 }
 
+// ConvertFromStringToInt64 ...
 func ConvertFromStringToInt64(val string) (pointerInt64 *int64, plainInt64 int64) {
 	valInt, _ := strconv.ParseInt(val, 10, 64)
 	return &valInt, valInt
+}
+
+// ConvertBoolFromInteger ....
+func ConvertBoolFromInteger(val int64) bool {
+	return val != 0
 }

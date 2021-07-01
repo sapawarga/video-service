@@ -9,6 +9,10 @@ import (
 )
 
 var currentTime, _ = helper.GetCurrentTimeUTC()
+var category = &model.Category{
+	ID:   1,
+	Name: "category",
+}
 var videoResponses = []*model.VideoResponse{
 	{
 		ID:         1,
@@ -39,29 +43,29 @@ var videoResponses = []*model.VideoResponse{
 
 var videoUsecase = []*model.Video{
 	{
-		ID:         1,
-		Title:      "Test Video 1",
-		CategoryID: 1,
-		Source:     "youtube",
-		VideoURL:   "https://youtube.com/UDOHE",
-		RegencyID:  1,
-		Status:     10,
-		CreatedAt:  currentTime,
-		UpdatedAt:  currentTime,
-		CreatedBy:  1,
-		UpdatedBy:  1,
+		ID:        1,
+		Title:     "Test Video 1",
+		Category:  category,
+		Source:    "youtube",
+		VideoURL:  "https://youtube.com/UDOHE",
+		RegencyID: 1,
+		Status:    10,
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		CreatedBy: 1,
+		UpdatedBy: 1,
 	}, {
-		ID:         2,
-		Title:      "Test Video 2",
-		CategoryID: 1,
-		Source:     "youtube",
-		VideoURL:   "https://youtube.com/UDOHE",
-		RegencyID:  1,
-		Status:     10,
-		CreatedAt:  currentTime,
-		UpdatedAt:  currentTime,
-		CreatedBy:  1,
-		UpdatedBy:  1,
+		ID:        2,
+		Title:     "Test Video 2",
+		Category:  category,
+		Source:    "youtube",
+		VideoURL:  "https://youtube.com/UDOHE",
+		RegencyID: 1,
+		Status:    10,
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		CreatedBy: 1,
+		UpdatedBy: 1,
 	},
 }
 
@@ -86,6 +90,7 @@ type GetListVideo struct {
 	GetListVideoRepoRequest model.GetListVideoRepoRequest
 	MockGetListVideoRepo    ResponseGetListVideo
 	MockGetMetadata         ResponseMetadata
+	MockGetCategoryName     ResponseGetCategoryName
 	MockUsecaseResponse     ResponseUsecase
 }
 
@@ -114,6 +119,10 @@ var GetListVideoData = []GetListVideo{
 			Result: helper.SetPointerInt64(int64(len(videoResponses))),
 			Error:  nil,
 		},
+		MockGetCategoryName: ResponseGetCategoryName{
+			Result: categoryName,
+			Error:  nil,
+		},
 		MockUsecaseResponse: ResponseUsecase{
 			Result: &model.VideoWithMetadata{
 				Data: videoUsecase,
@@ -129,6 +138,10 @@ var GetListVideoData = []GetListVideo{
 		UsecaseRequest: model.GetListVideoRequest{
 			RegencyID: regencyID,
 			Page:      page,
+		},
+		MockGetCategoryName: ResponseGetCategoryName{
+			Result: categoryName,
+			Error:  nil,
 		},
 		GetListVideoRepoRequest: model.GetListVideoRepoRequest{
 			RegencyID: regencyID,
@@ -158,6 +171,10 @@ var GetListVideoData = []GetListVideo{
 			Limit:     limit,
 			Offset:    offset,
 		},
+		MockGetCategoryName: ResponseGetCategoryName{
+			Result: categoryName,
+			Error:  nil,
+		},
 		MockGetListVideoRepo: ResponseGetListVideo{
 			Result: videoResponses,
 			Error:  nil,
@@ -169,6 +186,33 @@ var GetListVideoData = []GetListVideo{
 		MockUsecaseResponse: ResponseUsecase{
 			Result: nil,
 			Error:  errors.New("failed_get_metadata"),
+		},
+	}, {
+		Description: "failed_get_category",
+		UsecaseRequest: model.GetListVideoRequest{
+			RegencyID: regencyID,
+			Page:      page,
+		},
+		GetListVideoRepoRequest: model.GetListVideoRepoRequest{
+			RegencyID: regencyID,
+			Limit:     limit,
+			Offset:    offset,
+		},
+		MockGetCategoryName: ResponseGetCategoryName{
+			Result: nil,
+			Error:  errors.New("something went wrong"),
+		},
+		MockGetListVideoRepo: ResponseGetListVideo{
+			Result: videoResponses,
+			Error:  nil,
+		},
+		MockGetMetadata: ResponseMetadata{
+			Result: nil,
+			Error:  nil,
+		},
+		MockUsecaseResponse: ResponseUsecase{
+			Result: nil,
+			Error:  errors.New("something went wrong"),
 		},
 	},
 }

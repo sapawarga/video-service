@@ -54,7 +54,7 @@ type GetDetailVideo struct {
 }
 
 var location = helper.SetPointerString("regency")
-var category = helper.SetPointerString("category")
+var categoryName = helper.SetPointerString("category")
 
 var GetDetailVideoData = []GetDetailVideo{
 	{
@@ -72,24 +72,23 @@ var GetDetailVideoData = []GetDetailVideo{
 			Error:  nil,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockUsecaseResponse: ResponseUsecaseGetDetail{
 			Result: &model.VideoDetail{
-				ID:           videoDetail.ID,
-				Title:        videoDetail.Title.String,
-				CategoryID:   helper.SetPointerInt64(videoDetail.CategoryID.Int64),
-				CategoryName: category,
-				Source:       videoDetail.Source.String,
-				VideoURL:     videoDetail.VideoURL.String,
-				RegencyID:    helper.SetPointerInt64(videoDetail.RegencyID.Int64),
-				RegencyName:  location,
-				Status:       videoDetail.Status.Int64,
-				CreatedAt:    helper.SetPointerTime(videoDetail.CreatedAt.Time),
-				UpdatedAt:    helper.SetPointerTime(videoDetail.UpdatedAt.Time),
-				CreatedBy:    helper.SetPointerInt64(videoDetail.CreatedBy.Int64),
-				UpdatedBy:    helper.SetPointerInt64(videoDetail.UpdatedBy.Int64),
+				ID:          videoDetail.ID,
+				Title:       videoDetail.Title.String,
+				Category:    category,
+				Source:      videoDetail.Source.String,
+				VideoURL:    videoDetail.VideoURL.String,
+				RegencyID:   helper.SetPointerInt64(videoDetail.RegencyID.Int64),
+				RegencyName: location,
+				Status:      videoDetail.Status.Int64,
+				CreatedAt:   helper.SetPointerTime(videoDetail.CreatedAt.Time),
+				UpdatedAt:   helper.SetPointerTime(videoDetail.UpdatedAt.Time),
+				CreatedBy:   helper.SetPointerInt64(videoDetail.CreatedBy.Int64),
+				UpdatedBy:   helper.SetPointerInt64(videoDetail.UpdatedBy.Int64),
 			},
 			Error: nil,
 		},
@@ -108,7 +107,7 @@ var GetDetailVideoData = []GetDetailVideo{
 			Error:  nil,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockUsecaseResponse: ResponseUsecaseGetDetail{
@@ -130,7 +129,7 @@ var GetDetailVideoData = []GetDetailVideo{
 			Error:  sql.ErrNoRows,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
-			Result: category,
+			Result: categoryName,
 			Error:  nil,
 		},
 		MockUsecaseResponse: ResponseUsecaseGetDetail{

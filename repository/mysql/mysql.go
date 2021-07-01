@@ -29,7 +29,7 @@ func (r *VideoRepository) GetListVideo(ctx context.Context, req *model.GetListVi
 
 	query.WriteString(`
 		SELECT
-			id, category_id, title, source, video_url, kabkota_id, status, FROM_UNIXTIME(created_at) as created_at, 
+			id, category_id, title, source, video_url, kabkota_id, status, total_likes, is_push_notification, FROM_UNIXTIME(created_at) as created_at, 
 			FROM_UNIXTIME(updated_at) as updated_at, created_by, updated_by
 		FROM videos
 	`)
@@ -125,7 +125,7 @@ func (r *VideoRepository) GetCategoryNameByID(ctx context.Context, id int64) (*s
 	}
 
 	if err == sql.ErrNoRows {
-		return nil, sql.ErrNoRows
+		return nil, nil
 	}
 
 	if err != nil {

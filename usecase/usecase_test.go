@@ -38,6 +38,7 @@ var _ = Describe("Usecase", func() {
 		data := testcases.GetListVideoData[idx]
 		mockVideoRepo.EXPECT().GetListVideo(ctx, gomock.Any()).Return(data.MockGetListVideoRepo.Result, data.MockGetListVideoRepo.Error).Times(1)
 		mockVideoRepo.EXPECT().GetMetadataVideo(ctx, gomock.Any()).Return(data.MockGetMetadata.Result, data.MockGetMetadata.Error).Times(1)
+		mockVideoRepo.EXPECT().GetCategoryNameByID(ctx, gomock.Any()).Return(data.MockGetCategoryName.Result, data.MockGetCategoryName.Error).Times(len(data.MockGetListVideoRepo.Result))
 		resp, err := video.GetListVideo(ctx, &data.UsecaseRequest)
 		if err != nil {
 			Expect(err).NotTo(BeNil())
