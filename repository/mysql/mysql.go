@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"fmt"
 
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/constants"
+	"github.com/sapawarga/video-service/lib/converter"
+	"github.com/sapawarga/video-service/lib/generator"
 	"github.com/sapawarga/video-service/model"
 
 	"github.com/jmoiron/sqlx"
@@ -29,8 +32,8 @@ func (r *VideoRepository) GetListVideo(ctx context.Context, req *model.GetListVi
 
 	query.WriteString(`
 		SELECT
-			id, category_id, title, source, video_url, kabkota_id, status, total_likes, is_push_notification, FROM_UNIXTIME(created_at) as created_at, 
-			FROM_UNIXTIME(updated_at) as updated_at, created_by, updated_by
+			id, category_id, title, source, video_url, kabkota_id, status, total_likes, is_push_notification, created_at, seq,
+			updated_at, created_by, updated_by
 		FROM videos
 	`)
 	if req.RegencyID != nil {
@@ -89,8 +92,8 @@ func (r *VideoRepository) GetDetailVideo(ctx context.Context, id int64) (*model.
 
 	query.WriteString(`
 	SELECT
-		id, category_id, title, source, video_url, kabkota_id, status, FROM_UNIXTIME(created_at) as created_at, 
-		FROM_UNIXTIME(updated_at) as updated_at, created_by, updated_by
+		id, category_id, title, source, video_url, kabkota_id, status, created_at, 
+		updated_at, created_by, updated_by
 	FROM videos
 	`)
 	query.WriteString(" WHERE id = ? ")
@@ -135,12 +138,12 @@ func (r *VideoRepository) GetCategoryNameByID(ctx context.Context, id int64) (*s
 	return result, nil
 }
 
-func (r *VideoRepository) GetLocationNameByID(ctx context.Context, id int64) (*string, error) {
+func (r *VideoRepository) GetLocationByID(ctx context.Context, id int64) (*model.Location, error) {
 	var query bytes.Buffer
-	var result *string
+	var result *model.Location
 	var err error
 
-	query.WriteString(` SELECT name from areas WHERE id = ?`)
+	query.WriteString(`  SELECT id, name, code_bps FROM areas WHERE id = ? `)
 	if ctx != nil {
 		err = r.conn.GetContext(ctx, &result, query.String(), id)
 	} else {
@@ -164,11 +167,17 @@ func (r *VideoRepository) GetVideoStatistic(ctx context.Context) ([]*model.Video
 	var err error
 
 	query.WriteString(`
-		SELECT  c.id, c.name , COUNT(v.category_id) as count 
-		FROM videos v 
-		JOIN categories c  
-		ON c.id = v.category_id 
-		GROUP BY 1, 2
+	SELECT c.id, c.name, IFNULL(count, 0) AS count FROM categories c
+	LEFT JOIN (
+		SELECT c.id, c.name, COUNT(v.id) AS count
+		FROM videos v
+		LEFT JOIN categories c ON v.category_id = c.id
+		WHERE v.status <> -1
+		GROUP BY c.id
+	) AS statistic
+	ON c.id = statistic.id
+	WHERE c.type = 'video'
+	AND c.status <> -1;
 	`)
 
 	if ctx != nil {
@@ -187,14 +196,14 @@ func (r *VideoRepository) GetVideoStatistic(ctx context.Context) ([]*model.Video
 func (r *VideoRepository) Insert(ctx context.Context, params *model.CreateVideoRequest) error {
 	var query bytes.Buffer
 	var err error
-	_, current := helper.GetCurrentTimeUTC()
+	_, current := generator.GetCurrentTimeUTC()
 	// TODO: actor is from authenticator
 	actor := 1
 	query.WriteString("INSERT INTO videos")
 	query.WriteString(`
 		(category_id, title, source, video_url, kabkota_id, seq, status, created_by, created_at, updated_by, updated_at)`)
 	query.WriteString(`VALUES(
-		:category_id, :title, :source, :video_url, :kabkota_id, 1, :status, :actor, :created_at, :actor, :updated_at)`)
+		:category_id, :title, :source, :video_url, :kabkota_id, :seq, :status, :actor, :created_at, :actor, :updated_at)`)
 	queryParams := map[string]interface{}{
 		"category_id": params.CategoryID,
 		"title":       params.Title,
@@ -205,6 +214,7 @@ func (r *VideoRepository) Insert(ctx context.Context, params *model.CreateVideoR
 		"created_at":  current,
 		"actor":       actor,
 		"updated_at":  current,
+		"seq":         params.Sequence,
 	}
 
 	if ctx != nil {
@@ -223,53 +233,36 @@ func (r *VideoRepository) Insert(ctx context.Context, params *model.CreateVideoR
 func (r *VideoRepository) Update(ctx context.Context, params *model.UpdateVideoRequest) error {
 	var query bytes.Buffer
 	var queryParams = make(map[string]interface{})
-	var first = true
 	var err error
-	_, unixTime := helper.GetCurrentTimeUTC()
+	_, unixTime := generator.GetCurrentTimeUTC()
 
 	query.WriteString(` UPDATE videos SET`)
 	if params.CategoryID != nil {
 		query.WriteString(` category_id = :category_id`)
-		queryParams["category_id"] = params.CategoryID
-		first = false
+		queryParams["category_id"] = converter.GetInt64FromPointer(params.CategoryID)
 	}
 	if params.Title != nil {
-		if !first {
-			query.WriteString(" , ")
-		}
-		query.WriteString(" title = :title ")
-		queryParams["title"] = params.Title
-		first = false
+		query.WriteString(updateNext(ctx, "title"))
+		queryParams["title"] = converter.GetStringFromPointer(params.Title)
 	}
 	if params.Source != nil {
-		if !first {
-			query.WriteString(" , ")
-		}
-		query.WriteString(" source = :source ")
-		queryParams["source"] = params.Source
-		first = false
+		query.WriteString(updateNext(ctx, "source"))
+		queryParams["source"] = converter.GetStringFromPointer(params.Source)
 	}
 	if params.VideoURL != nil {
-		if !first {
-			query.WriteString(" , ")
-		}
-		query.WriteString(" video_url = :video_url ")
-		queryParams["video_url"] = params.VideoURL
-		first = false
+		query.WriteString(updateNext(ctx, "video_url"))
+		queryParams["video_url"] = converter.GetStringFromPointer(params.VideoURL)
 	}
 	if params.Status != nil {
-		if !first {
-			query.WriteString(" , ")
-		}
-		query.WriteString(" status = :status")
-		queryParams["status"] = params.Status
-		first = false
+		query.WriteString(updateNext(ctx, "status"))
+		queryParams["status"] = converter.GetInt64FromPointer(params.Status)
 	}
-	if !first {
-		query.WriteString(" , ")
+	if params.Sequence != nil {
+		query.WriteString(updateNext(ctx, "seq"))
+		queryParams["seq"] = converter.GetInt64FromPointer(params.Sequence)
 	}
-	query.WriteString(" kabkota_id = :regency_id ,  created_at = :updated_at, updated_at = :updated_at WHERE id = :id")
-	queryParams["regency_id"] = params.RegencyID
+	query.WriteString(" kabkota_id = :kabkota_id ,  created_at = :updated_at, updated_at = :updated_at WHERE id = :id")
+	queryParams["kabkota_id"] = converter.GetInt64FromPointer(params.RegencyID)
 	queryParams["updated_at"] = unixTime
 	queryParams["id"] = params.ID
 
@@ -292,7 +285,7 @@ func (r *VideoRepository) Delete(ctx context.Context, id int64) error {
 	var err error
 
 	query.WriteString(" UPDATE videos SET status = :status WHERE id = :id ")
-	params["status"] = helper.DELETED
+	params["status"] = constants.DELETED
 	params["id"] = id
 	if ctx != nil {
 		_, err = r.conn.NamedExecContext(ctx, query.String(), params)
@@ -320,4 +313,10 @@ func (r *VideoRepository) HealthCheckReadiness(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func updateNext(ctx context.Context, field string) string {
+	var query bytes.Buffer
+	query.WriteString(fmt.Sprintf(" , %s = :%s ", field, field))
+	return query.String()
 }

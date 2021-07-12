@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/constants"
 )
 
 type GetVideoRequest struct {
@@ -22,9 +22,10 @@ type CreateVideoRequest struct {
 	Title      *string `json:"title"`
 	Source     *string `json:"source"`
 	CategoryID *int64  `json:"category_id"`
-	RegencyID  *int64  `json:"regency_id"`
+	RegencyID  *int64  `json:"kabkota_id"`
 	VideoURL   *string `json:"video_url"`
 	Status     *int64  `json:"status"`
+	Sequence   *int64  `json:"seq"`
 }
 
 type UpdateVideoRequest struct {
@@ -32,9 +33,10 @@ type UpdateVideoRequest struct {
 	Title      *string `json:"title"`
 	Source     *string `json:"source"`
 	CategoryID *int64  `json:"category_id"`
-	RegencyID  *int64  `json:"regency_id"`
+	RegencyID  *int64  `json:"kabkota_id"`
 	VideoURL   *string `json:"video_url"`
 	Status     *int64  `json:"status"`
+	Sequence   *int64  `json:"seq"`
 }
 
 func ValidateInputs(in interface{}) error {
@@ -44,7 +46,7 @@ func ValidateInputs(in interface{}) error {
 			validation.Field(&obj.Source, validation.Required, validation.In("youtube")),
 			validation.Field(&obj.CategoryID, validation.Required),
 			validation.Field(&obj.VideoURL, validation.Required, validation.Match(regexp.MustCompile("^(https://www.youtube.com/).+$"))),
-			validation.Field(&obj.Status, validation.Required, validation.In(helper.DELETED, helper.ACTIVED, helper.INACTIVED)),
+			validation.Field(&obj.Status, validation.Required, validation.In(constants.DELETED, constants.ACTIVED, constants.INACTIVED)),
 		)
 	} else if obj, ok := in.(*UpdateVideoRequest); ok {
 		return validation.ValidateStruct(obj,
@@ -53,7 +55,7 @@ func ValidateInputs(in interface{}) error {
 			validation.Field(&obj.Source, validation.In("youtube")),
 			validation.Field(&obj.CategoryID),
 			validation.Field(&obj.VideoURL, validation.Match(regexp.MustCompile("^(https://www.youtube.com/).+$"))),
-			validation.Field(&obj.Status, validation.In(helper.DELETED, helper.ACTIVED, helper.INACTIVED)),
+			validation.Field(&obj.Status, validation.In(constants.DELETED, constants.ACTIVED, constants.INACTIVED)),
 		)
 	}
 	return errors.New("format_struct_not_valid")

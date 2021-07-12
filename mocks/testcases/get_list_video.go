@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/converter"
+	"github.com/sapawarga/video-service/lib/generator"
 	"github.com/sapawarga/video-service/model"
 )
 
-var currentTime, _ = helper.GetCurrentTimeUTC()
+var _, currentTime = generator.GetCurrentTimeUTC()
 var category = &model.Category{
 	ID:   1,
 	Name: "category",
@@ -22,8 +23,8 @@ var videoResponses = []*model.VideoResponse{
 		VideoURL:   sql.NullString{String: "https://youtube.com/UDOHE", Valid: true},
 		RegencyID:  sql.NullInt64{Int64: 1, Valid: true},
 		Status:     sql.NullInt64{Int64: 10, Valid: true},
-		CreatedAt:  sql.NullTime{Time: currentTime, Valid: true},
-		UpdatedAt:  sql.NullTime{Time: currentTime, Valid: true},
+		CreatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
+		UpdatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
 		CreatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 		UpdatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 	}, {
@@ -34,8 +35,8 @@ var videoResponses = []*model.VideoResponse{
 		VideoURL:   sql.NullString{String: "https://youtube.com/UDOHE", Valid: true},
 		RegencyID:  sql.NullInt64{Int64: 1, Valid: true},
 		Status:     sql.NullInt64{Int64: 10, Valid: true},
-		CreatedAt:  sql.NullTime{Time: currentTime, Valid: true},
-		UpdatedAt:  sql.NullTime{Time: currentTime, Valid: true},
+		CreatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
+		UpdatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
 		CreatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 		UpdatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 	},
@@ -48,7 +49,7 @@ var videoUsecase = []*model.Video{
 		Category:  category,
 		Source:    "youtube",
 		VideoURL:  "https://youtube.com/UDOHE",
-		RegencyID: 1,
+		Regency:   location,
 		Status:    10,
 		CreatedAt: currentTime,
 		UpdatedAt: currentTime,
@@ -60,7 +61,7 @@ var videoUsecase = []*model.Video{
 		Category:  category,
 		Source:    "youtube",
 		VideoURL:  "https://youtube.com/UDOHE",
-		RegencyID: 1,
+		Regency:   location,
 		Status:    10,
 		CreatedAt: currentTime,
 		UpdatedAt: currentTime,
@@ -83,21 +84,22 @@ type ResponseUsecase struct {
 	Result *model.VideoWithMetadata
 	Error  error
 }
-
 type GetListVideo struct {
 	Description             string
 	UsecaseRequest          model.GetListVideoRequest
 	GetListVideoRepoRequest model.GetListVideoRepoRequest
+	GetLocationByID         int64
+	MockGetLocationByID     ResponseGetLocation
 	MockGetListVideoRepo    ResponseGetListVideo
 	MockGetMetadata         ResponseMetadata
 	MockGetCategoryName     ResponseGetCategoryName
 	MockUsecaseResponse     ResponseUsecase
 }
 
-var regencyID = helper.SetPointerInt64(1)
-var page = helper.SetPointerInt64(1)
-var limit = helper.SetPointerInt64(10)
-var offset = helper.SetPointerInt64(0)
+var regencyID = converter.SetPointerInt64(1)
+var page = converter.SetPointerInt64(1)
+var limit = converter.SetPointerInt64(10)
+var offset = converter.SetPointerInt64(0)
 
 var GetListVideoData = []GetListVideo{
 	{
@@ -111,12 +113,17 @@ var GetListVideoData = []GetListVideo{
 			Limit:     limit,
 			Offset:    offset,
 		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: location,
+			Error:  nil,
+		},
 		MockGetListVideoRepo: ResponseGetListVideo{
 			Result: videoResponses,
 			Error:  nil,
 		},
 		MockGetMetadata: ResponseMetadata{
-			Result: helper.SetPointerInt64(int64(len(videoResponses))),
+			Result: converter.SetPointerInt64(int64(len(videoResponses))),
 			Error:  nil,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
@@ -141,6 +148,11 @@ var GetListVideoData = []GetListVideo{
 		},
 		MockGetCategoryName: ResponseGetCategoryName{
 			Result: categoryName,
+			Error:  nil,
+		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: location,
 			Error:  nil,
 		},
 		GetListVideoRepoRequest: model.GetListVideoRepoRequest{
@@ -171,6 +183,11 @@ var GetListVideoData = []GetListVideo{
 			Limit:     limit,
 			Offset:    offset,
 		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: location,
+			Error:  nil,
+		},
 		MockGetCategoryName: ResponseGetCategoryName{
 			Result: categoryName,
 			Error:  nil,
@@ -193,6 +210,11 @@ var GetListVideoData = []GetListVideo{
 			RegencyID: regencyID,
 			Page:      page,
 		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: location,
+			Error:  nil,
+		},
 		GetListVideoRepoRequest: model.GetListVideoRepoRequest{
 			RegencyID: regencyID,
 			Limit:     limit,
@@ -201,6 +223,38 @@ var GetListVideoData = []GetListVideo{
 		MockGetCategoryName: ResponseGetCategoryName{
 			Result: nil,
 			Error:  errors.New("something went wrong"),
+		},
+		MockGetListVideoRepo: ResponseGetListVideo{
+			Result: videoResponses,
+			Error:  nil,
+		},
+		MockGetMetadata: ResponseMetadata{
+			Result: nil,
+			Error:  nil,
+		},
+		MockUsecaseResponse: ResponseUsecase{
+			Result: nil,
+			Error:  errors.New("something went wrong"),
+		},
+	}, {
+		Description: "failed_get_locatioan",
+		UsecaseRequest: model.GetListVideoRequest{
+			RegencyID: regencyID,
+			Page:      page,
+		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: nil,
+			Error:  errors.New("something_went_wrong"),
+		},
+		GetListVideoRepoRequest: model.GetListVideoRepoRequest{
+			RegencyID: regencyID,
+			Limit:     limit,
+			Offset:    offset,
+		},
+		MockGetCategoryName: ResponseGetCategoryName{
+			Result: nil,
+			Error:  nil,
 		},
 		MockGetListVideoRepo: ResponseGetListVideo{
 			Result: videoResponses,

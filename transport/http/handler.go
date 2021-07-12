@@ -7,7 +7,8 @@ import (
 	"strings"
 
 	"github.com/sapawarga/video-service/endpoint"
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/constants"
+	"github.com/sapawarga/video-service/lib/converter"
 	"github.com/sapawarga/video-service/usecase"
 
 	kitlog "github.com/go-kit/kit/log"
@@ -27,8 +28,8 @@ func MakeHealthyCheckHandler(ctx context.Context, fs usecase.UsecaseI, logger ki
 	}
 
 	r := mux.NewRouter()
-	r.Handle("/health/live", kithttp.NewServer(endpoint.MakeCheckHealthy(ctx), decodeNoRequest, encodeResponse, opts...)).Methods(helper.HTTP_GET)
-	r.Handle("/health/ready", kithttp.NewServer(endpoint.MakeCheckReadiness(ctx, fs), decodeNoRequest, encodeResponse, opts...)).Methods(helper.HTTP_GET)
+	r.Handle("/health/live", kithttp.NewServer(endpoint.MakeCheckHealthy(ctx), decodeNoRequest, encodeResponse, opts...)).Methods(constants.HTTP_GET)
+	r.Handle("/health/ready", kithttp.NewServer(endpoint.MakeCheckReadiness(ctx, fs), decodeNoRequest, encodeResponse, opts...)).Methods(constants.HTTP_GET)
 	return r
 }
 
@@ -48,12 +49,12 @@ func MakeHTTPHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Log
 	r := mux.NewRouter()
 
 	// TODO: handle token middleware
-	r.Handle("/videos/", processVideoGetList).Methods(helper.HTTP_GET)
-	r.Handle("/videos/", processCreateVideo).Methods(helper.HTTP_POST)
-	r.Handle("/videos/statistic", processGetVideoStatistic).Methods(helper.HTTP_GET)
-	r.Handle("/videos/{id}", processGetDetailVideo).Methods(helper.HTTP_GET)
-	r.Handle("/videos/{id}", processUpdateVideo).Methods(helper.HTTP_PUT)
-	r.Handle("/videos/{id}", processDeleteVideo).Methods(helper.HTTP_DELETE)
+	r.Handle("/videos/", processVideoGetList).Methods(constants.HTTP_GET)
+	r.Handle("/videos/", processCreateVideo).Methods(constants.HTTP_POST)
+	r.Handle("/videos/statistic", processGetVideoStatistic).Methods(constants.HTTP_GET)
+	r.Handle("/videos/{id}", processGetDetailVideo).Methods(constants.HTTP_GET)
+	r.Handle("/videos/{id}", processUpdateVideo).Methods(constants.HTTP_PUT)
+	r.Handle("/videos/{id}", processDeleteVideo).Methods(constants.HTTP_DELETE)
 
 	return r
 }
@@ -69,9 +70,9 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 	if limitString == "" || limitString == "0" {
 		limitString = "10"
 	}
-	regID, _ := helper.ConvertFromStringToInt64(regIDString)
-	pageInt, _ := helper.ConvertFromStringToInt64(pageString)
-	limit, _ := helper.ConvertFromStringToInt64(limitString)
+	regID, _ := converter.ConvertFromStringToInt64(regIDString)
+	pageInt, _ := converter.ConvertFromStringToInt64(pageString)
+	limit, _ := converter.ConvertFromStringToInt64(limitString)
 	request := &endpoint.GetVideoRequest{
 		RegencyID: regID,
 		Page:      pageInt,
@@ -83,7 +84,7 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 
 func decodeGetByID(ctx context.Context, r *http.Request) (interface{}, error) {
 	params := mux.Vars(r)
-	_, id := helper.ConvertFromStringToInt64(params["id"])
+	_, id := converter.ConvertFromStringToInt64(params["id"])
 	request := &endpoint.RequestID{
 		ID: id,
 	}
@@ -105,7 +106,7 @@ func decodeCreateVideo(ctx context.Context, r *http.Request) (interface{}, error
 
 func decodeUpdateVideo(ctx context.Context, r *http.Request) (interface{}, error) {
 	params := mux.Vars(r)
-	id, _ := helper.ConvertFromStringToInt64(params["id"])
+	id, _ := converter.ConvertFromStringToInt64(params["id"])
 
 	reqBody := &endpoint.UpdateVideoRequest{}
 	if err := json.NewDecoder(r.Body).Decode(reqBody); err != nil {
@@ -124,9 +125,9 @@ func encodeResponse(ctx context.Context, w http.ResponseWriter, response interfa
 
 	status, ok := response.(*endpoint.StatusResponse)
 	if ok {
-		if status.Code == helper.STATUS_CREATED {
+		if status.Code == constants.STATUS_CREATED {
 			w.WriteHeader(http.StatusCreated)
-		} else if status.Code == helper.STATUS_UPDATED || status.Code == helper.STATUS_DELETED {
+		} else if status.Code == constants.STATUS_UPDATED || status.Code == constants.STATUS_DELETED {
 			w.WriteHeader(http.StatusNoContent)
 			return json.NewEncoder(w).Encode(nil)
 		}

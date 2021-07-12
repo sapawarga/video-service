@@ -4,16 +4,17 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/converter"
+	"github.com/sapawarga/video-service/lib/generator"
 	"github.com/sapawarga/video-service/model"
 )
 
 var newVideoRequest = &model.CreateVideoRequest{
-	Title:      helper.GenerateRandomString(12),
+	Title:      generator.GenerateRandomString(12),
 	Source:     "youtube",
 	CategoryID: 1,
-	RegencyID:  helper.SetPointerInt64(1),
-	VideoURL:   helper.GenerateRandomString(10),
+	RegencyID:  converter.SetPointerInt64(1),
+	VideoURL:   generator.GenerateRandomString(10),
 	Status:     10,
 }
 
@@ -23,7 +24,7 @@ type CreateNewVideo struct {
 	GetLocationName     int64
 	GetCategoryName     int64
 	RepositoryRequest   *model.CreateVideoRequest
-	MockGetLocationName ResponseGetLocationName
+	MockGetLocation     ResponseGetLocation
 	MockGetCategoryName ResponseGetCategoryName
 	MockRepository      error
 	MockUsecase         error
@@ -36,7 +37,7 @@ var CreateNewVideoData = []CreateNewVideo{
 		GetLocationName:   1,
 		GetCategoryName:   1,
 		RepositoryRequest: newVideoRequest,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
@@ -52,7 +53,7 @@ var CreateNewVideoData = []CreateNewVideo{
 		GetLocationName:   1,
 		GetCategoryName:   1,
 		RepositoryRequest: newVideoRequest,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
@@ -68,7 +69,7 @@ var CreateNewVideoData = []CreateNewVideo{
 		GetLocationName:   1,
 		GetCategoryName:   1,
 		RepositoryRequest: newVideoRequest,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: nil,
 			Error:  sql.ErrNoRows,
 		},
@@ -84,7 +85,7 @@ var CreateNewVideoData = []CreateNewVideo{
 		GetLocationName:   1,
 		GetCategoryName:   1,
 		RepositoryRequest: newVideoRequest,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},

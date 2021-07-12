@@ -1,4 +1,4 @@
-package helper
+package constants
 
 const (
 	DELETED          int64 = -1
@@ -15,4 +15,6 @@ const (
 	STATUS_CREATED         = "status_created"
 	STATUS_UPDATED         = "status_updated"
 	STATUS_DELETED         = "status_deleted"
+	PER_PAGE         int64 = 20
+	TOTAL_PAGE       int64 = 1
 )
