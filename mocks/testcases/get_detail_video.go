@@ -3,7 +3,7 @@ package testcases
 import (
 	"database/sql"
 
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/converter"
 	"github.com/sapawarga/video-service/model"
 )
 
@@ -58,7 +58,7 @@ var location = &model.Location{
 	BPSCode: "code",
 	Name:    "location",
 }
-var categoryName = helper.SetPointerString("category")
+var categoryName = converter.SetPointerString("category")
 
 var GetDetailVideoData = []GetDetailVideo{
 	{
@@ -88,10 +88,10 @@ var GetDetailVideoData = []GetDetailVideo{
 				VideoURL:  videoDetail.VideoURL.String,
 				Regency:   location,
 				Status:    videoDetail.Status.Int64,
-				CreatedAt: helper.SetPointerInt64(videoDetail.CreatedAt.Int64),
-				UpdatedAt: helper.SetPointerInt64(videoDetail.UpdatedAt.Int64),
-				CreatedBy: helper.SetPointerInt64(videoDetail.CreatedBy.Int64),
-				UpdatedBy: helper.SetPointerInt64(videoDetail.UpdatedBy.Int64),
+				CreatedAt: converter.SetPointerInt64(videoDetail.CreatedAt.Int64),
+				UpdatedAt: converter.SetPointerInt64(videoDetail.UpdatedAt.Int64),
+				CreatedBy: converter.SetPointerInt64(videoDetail.CreatedBy.Int64),
+				UpdatedBy: converter.SetPointerInt64(videoDetail.UpdatedBy.Int64),
 			},
 			Error: nil,
 		},

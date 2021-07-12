@@ -6,7 +6,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/constants"
+	"github.com/sapawarga/video-service/lib/converter"
+	"github.com/sapawarga/video-service/lib/generator"
 	"github.com/sapawarga/video-service/model"
 
 	"github.com/jmoiron/sqlx"
@@ -194,7 +196,7 @@ func (r *VideoRepository) GetVideoStatistic(ctx context.Context) ([]*model.Video
 func (r *VideoRepository) Insert(ctx context.Context, params *model.CreateVideoRequest) error {
 	var query bytes.Buffer
 	var err error
-	_, current := helper.GetCurrentTimeUTC()
+	_, current := generator.GetCurrentTimeUTC()
 	// TODO: actor is from authenticator
 	actor := 1
 	query.WriteString("INSERT INTO videos")
@@ -232,35 +234,35 @@ func (r *VideoRepository) Update(ctx context.Context, params *model.UpdateVideoR
 	var query bytes.Buffer
 	var queryParams = make(map[string]interface{})
 	var err error
-	_, unixTime := helper.GetCurrentTimeUTC()
+	_, unixTime := generator.GetCurrentTimeUTC()
 
 	query.WriteString(` UPDATE videos SET`)
 	if params.CategoryID != nil {
 		query.WriteString(` category_id = :category_id`)
-		queryParams["category_id"] = helper.GetInt64FromPointer(params.CategoryID)
+		queryParams["category_id"] = converter.GetInt64FromPointer(params.CategoryID)
 	}
 	if params.Title != nil {
 		query.WriteString(updateNext(ctx, "title"))
-		queryParams["title"] = helper.GetStringFromPointer(params.Title)
+		queryParams["title"] = converter.GetStringFromPointer(params.Title)
 	}
 	if params.Source != nil {
 		query.WriteString(updateNext(ctx, "source"))
-		queryParams["source"] = helper.GetStringFromPointer(params.Source)
+		queryParams["source"] = converter.GetStringFromPointer(params.Source)
 	}
 	if params.VideoURL != nil {
 		query.WriteString(updateNext(ctx, "video_url"))
-		queryParams["video_url"] = helper.GetStringFromPointer(params.VideoURL)
+		queryParams["video_url"] = converter.GetStringFromPointer(params.VideoURL)
 	}
 	if params.Status != nil {
 		query.WriteString(updateNext(ctx, "status"))
-		queryParams["status"] = helper.GetInt64FromPointer(params.Status)
+		queryParams["status"] = converter.GetInt64FromPointer(params.Status)
 	}
 	if params.Sequence != nil {
 		query.WriteString(updateNext(ctx, "seq"))
-		queryParams["seq"] = helper.GetInt64FromPointer(params.Sequence)
+		queryParams["seq"] = converter.GetInt64FromPointer(params.Sequence)
 	}
 	query.WriteString(" kabkota_id = :kabkota_id ,  created_at = :updated_at, updated_at = :updated_at WHERE id = :id")
-	queryParams["kabkota_id"] = helper.GetInt64FromPointer(params.RegencyID)
+	queryParams["kabkota_id"] = converter.GetInt64FromPointer(params.RegencyID)
 	queryParams["updated_at"] = unixTime
 	queryParams["id"] = params.ID
 
@@ -283,7 +285,7 @@ func (r *VideoRepository) Delete(ctx context.Context, id int64) error {
 	var err error
 
 	query.WriteString(" UPDATE videos SET status = :status WHERE id = :id ")
-	params["status"] = helper.DELETED
+	params["status"] = constants.DELETED
 	params["id"] = id
 	if ctx != nil {
 		_, err = r.conn.NamedExecContext(ctx, query.String(), params)

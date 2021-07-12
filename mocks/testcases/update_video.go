@@ -4,18 +4,19 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/converter"
+	"github.com/sapawarga/video-service/lib/generator"
 	"github.com/sapawarga/video-service/model"
 )
 
 var videoUpdate = &model.UpdateVideoRequest{
-	ID:         helper.SetPointerInt64(1),
-	Title:      helper.SetPointerString(helper.GenerateRandomString(10)),
-	Source:     helper.SetPointerString("youtube"),
-	CategoryID: helper.SetPointerInt64(1),
-	RegencyID:  helper.SetPointerInt64(1),
-	VideoURL:   helper.SetPointerString(helper.GenerateRandomString(10)),
-	Status:     helper.SetPointerInt64(10),
+	ID:         converter.SetPointerInt64(1),
+	Title:      converter.SetPointerString(generator.GenerateRandomString(10)),
+	Source:     converter.SetPointerString("youtube"),
+	CategoryID: converter.SetPointerInt64(1),
+	RegencyID:  converter.SetPointerInt64(1),
+	VideoURL:   converter.SetPointerString(generator.GenerateRandomString(10)),
+	Status:     converter.SetPointerInt64(10),
 }
 
 type UpdateVideo struct {

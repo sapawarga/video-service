@@ -1,7 +1,7 @@
 package endpoint
 
 import (
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/converter"
 	"github.com/sapawarga/video-service/model"
 )
 
@@ -74,11 +74,11 @@ func EncodeResponse(data []*model.Video) (result []*Video) {
 			encodeData := &Video{
 				ID:                 v.ID,
 				Title:              v.Title,
-				CategoryID:         helper.SetPointerInt64(v.Category.ID),
+				CategoryID:         converter.SetPointerInt64(v.Category.ID),
 				Category:           v.Category,
 				Source:             v.Source,
 				VideoURL:           v.VideoURL,
-				RegencyID:          helper.SetPointerInt64(v.Regency.ID),
+				RegencyID:          converter.SetPointerInt64(v.Regency.ID),
 				Regency:            v.Regency,
 				TotalLike:          v.TotalLikes,
 				IsPushNotification: v.IsPushNotification,

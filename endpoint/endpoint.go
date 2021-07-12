@@ -4,7 +4,8 @@ import (
 	"context"
 
 	"github.com/go-kit/kit/endpoint"
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/constants"
+	"github.com/sapawarga/video-service/lib/converter"
 	"github.com/sapawarga/video-service/model"
 	"github.com/sapawarga/video-service/usecase"
 )
@@ -53,7 +54,7 @@ func MakeGetDetailVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 		}
 
 		if resp.Regency != nil {
-			data.RegencyID = helper.SetPointerInt64(resp.Regency.ID)
+			data.RegencyID = converter.SetPointerInt64(resp.Regency.ID)
 			data.Regency = resp.Regency
 		}
 
@@ -73,9 +74,9 @@ func MakeGetVideoStatistic(ctx context.Context, fs usecase.UsecaseI) endpoint.En
 		}
 
 		meta := &model.Metadata{
-			Page:        20,
-			TotalPage:   1,
-			CurrentPage: 1,
+			Page:        constants.PER_PAGE,
+			TotalPage:   float64(constants.TOTAL_PAGE),
+			CurrentPage: constants.TOTAL_PAGE,
 			Total:       int64(len(resp)),
 		}
 
@@ -98,19 +99,19 @@ func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 		}
 
 		if err = fs.CreateNewVideo(ctx, &model.CreateVideoRequest{
-			Title:      helper.GetStringFromPointer(req.Source),
-			Source:     helper.GetStringFromPointer(req.Source),
-			CategoryID: helper.GetInt64FromPointer(req.CategoryID),
+			Title:      converter.GetStringFromPointer(req.Source),
+			Source:     converter.GetStringFromPointer(req.Source),
+			CategoryID: converter.GetInt64FromPointer(req.CategoryID),
 			RegencyID:  req.RegencyID,
-			Sequence:   helper.GetInt64FromPointer(req.Sequence),
-			VideoURL:   helper.GetStringFromPointer(req.VideoURL),
-			Status:     helper.GetInt64FromPointer(req.Status),
+			Sequence:   converter.GetInt64FromPointer(req.Sequence),
+			VideoURL:   converter.GetStringFromPointer(req.VideoURL),
+			Status:     converter.GetInt64FromPointer(req.Status),
 		}); err != nil {
 			return nil, err
 		}
 
 		return &StatusResponse{
-			Code:    helper.STATUS_CREATED,
+			Code:    constants.STATUS_CREATED,
 			Message: "video_has_created_successfully",
 		}, nil
 	}
@@ -136,7 +137,7 @@ func MakeUpdateVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 			return nil, err
 		}
 		return &StatusResponse{
-			Code:    helper.STATUS_UPDATED,
+			Code:    constants.STATUS_UPDATED,
 			Message: "video_has_updated_successfully",
 		}, nil
 	}
@@ -151,7 +152,7 @@ func MakeDeleteVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 		}
 
 		return &StatusResponse{
-			Code:    helper.STATUS_DELETED,
+			Code:    constants.STATUS_DELETED,
 			Message: "video_has_deleted_successfully",
 		}, nil
 	}
@@ -160,7 +161,7 @@ func MakeDeleteVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 func MakeCheckHealthy(ctx context.Context) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		return &StatusResponse{
-			Code:    helper.STATUS_OK,
+			Code:    constants.STATUS_OK,
 			Message: "service_is_ok",
 		}, nil
 	}
@@ -172,7 +173,7 @@ func MakeCheckReadiness(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 			return nil, err
 		}
 		return &StatusResponse{
-			Code:    helper.STATUS_OK,
+			Code:    constants.STATUS_OK,
 			Message: "service_is_ready",
 		}, nil
 	}

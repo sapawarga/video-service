@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/generator"
 	"github.com/sapawarga/video-service/model"
 )
 
 var randomString = []string{
-	helper.GenerateRandomString(5), helper.GenerateRandomString(5),
+	generator.GenerateRandomString(5), generator.GenerateRandomString(5),
 }
 
 var videoStatistic = []*model.VideoStatistic{

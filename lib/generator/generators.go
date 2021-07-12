@@ -1,4 +1,4 @@
-package helper
+package generator
 
 import (
 	"math/rand"
@@ -21,6 +21,7 @@ func GetCurrentTimeUTC() (standartTime time.Time, unixTime int64) {
 
 var src = rand.NewSource(time.Now().UnixNano())
 
+// GenerateRandomString ...
 func GenerateRandomString(n int) string {
 	sb := strings.Builder{}
 	sb.Grow(n)

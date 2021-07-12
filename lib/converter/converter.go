@@ -1,4 +1,4 @@
-package helper
+package converter
 
 import (
 	"strconv"

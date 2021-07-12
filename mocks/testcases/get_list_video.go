@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/converter"
+	"github.com/sapawarga/video-service/lib/generator"
 	"github.com/sapawarga/video-service/model"
 )
 
-var _, currentTime = helper.GetCurrentTimeUTC()
+var _, currentTime = generator.GetCurrentTimeUTC()
 var category = &model.Category{
 	ID:   1,
 	Name: "category",
@@ -95,10 +96,10 @@ type GetListVideo struct {
 	MockUsecaseResponse     ResponseUsecase
 }
 
-var regencyID = helper.SetPointerInt64(1)
-var page = helper.SetPointerInt64(1)
-var limit = helper.SetPointerInt64(10)
-var offset = helper.SetPointerInt64(0)
+var regencyID = converter.SetPointerInt64(1)
+var page = converter.SetPointerInt64(1)
+var limit = converter.SetPointerInt64(10)
+var offset = converter.SetPointerInt64(0)
 
 var GetListVideoData = []GetListVideo{
 	{
@@ -122,7 +123,7 @@ var GetListVideoData = []GetListVideo{
 			Error:  nil,
 		},
 		MockGetMetadata: ResponseMetadata{
-			Result: helper.SetPointerInt64(int64(len(videoResponses))),
+			Result: converter.SetPointerInt64(int64(len(videoResponses))),
 			Error:  nil,
 		},
 		MockGetCategoryName: ResponseGetCategoryName{

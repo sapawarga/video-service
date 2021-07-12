@@ -5,10 +5,9 @@ import (
 	"errors"
 	"math"
 
+	"github.com/sapawarga/video-service/lib/converter"
 	"github.com/sapawarga/video-service/model"
 	"github.com/sapawarga/video-service/repository"
-
-	"github.com/sapawarga/video-service/helper"
 
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -30,16 +29,16 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 	logger := kitlog.With(v.logger, "method", "GetListVideo")
 	var limit, offset int64 = 10, 0
 	if req.Limit != nil {
-		limit = helper.GetInt64FromPointer(req.Limit)
+		limit = converter.GetInt64FromPointer(req.Limit)
 	}
 	if req.Page != nil && *req.Page > 1 {
-		offset = (helper.GetInt64FromPointer(req.Page) - 1) * limit
+		offset = (converter.GetInt64FromPointer(req.Page) - 1) * limit
 	}
 
 	request := &model.GetListVideoRepoRequest{
-		RegencyID: helper.SetPointerInt64(*req.RegencyID),
-		Offset:    &offset,
-		Limit:     &limit,
+		RegencyID: req.RegencyID,
+		Offset:    converter.SetPointerInt64(offset),
+		Limit:     converter.SetPointerInt64(limit),
 	}
 
 	resp, err := v.repo.GetListVideo(ctx, request)
@@ -62,9 +61,9 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 		}
 
 		meta.Page = limit
-		meta.TotalPage = math.Ceil(float64(helper.GetInt64FromPointer(total)) / float64(limit))
-		meta.Total = helper.GetInt64FromPointer(total)
-		meta.CurrentPage = helper.GetInt64FromPointer(req.Page)
+		meta.TotalPage = math.Ceil(float64(converter.GetInt64FromPointer(total)) / float64(limit))
+		meta.Total = converter.GetInt64FromPointer(total)
+		meta.CurrentPage = converter.GetInt64FromPointer(req.Page)
 	}
 
 	return &model.VideoWithMetadata{
@@ -90,10 +89,10 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 		Sequence:           resp.Sequence.Int64,
 		TotalLikes:         resp.TotalLikes.Int64,
 		IsPushNotification: model.BoolFromInt[resp.IsPushNotification.Int64],
-		CreatedAt:          helper.SetPointerInt64(resp.CreatedAt.Int64),
-		UpdatedAt:          helper.SetPointerInt64(resp.UpdatedAt.Int64),
-		CreatedBy:          helper.SetPointerInt64(resp.CreatedBy.Int64),
-		UpdatedBy:          helper.SetPointerInt64(resp.UpdatedBy.Int64),
+		CreatedAt:          converter.SetPointerInt64(resp.CreatedAt.Int64),
+		UpdatedAt:          converter.SetPointerInt64(resp.UpdatedAt.Int64),
+		CreatedBy:          converter.SetPointerInt64(resp.CreatedBy.Int64),
+		UpdatedBy:          converter.SetPointerInt64(resp.UpdatedBy.Int64),
 	}
 
 	if resp.CategoryID.Valid {
@@ -104,7 +103,7 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 		}
 		result.Category = &model.Category{
 			ID:   resp.CategoryID.Int64,
-			Name: helper.GetStringFromPointer(name),
+			Name: converter.GetStringFromPointer(name),
 		}
 	}
 	if resp.RegencyID.Valid {
@@ -148,7 +147,7 @@ func (v *Video) CreateNewVideo(ctx context.Context, req *model.CreateVideoReques
 	}
 
 	if req.RegencyID != nil {
-		if _, err = v.repo.GetLocationByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
+		if _, err = v.repo.GetLocationByID(ctx, converter.GetInt64FromPointer(req.RegencyID)); err != nil {
 			level.Error(logger).Log("error_get_regency", err)
 			return err
 		}
@@ -165,7 +164,7 @@ func (v *Video) UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) 
 	logger := kitlog.With(v.logger, "method", "UpdateVideo")
 	var err error
 
-	data, err := v.repo.GetDetailVideo(ctx, helper.GetInt64FromPointer(req.ID))
+	data, err := v.repo.GetDetailVideo(ctx, converter.GetInt64FromPointer(req.ID))
 	if err != nil {
 		level.Error(logger).Log("error_get_detail", err)
 		return err
@@ -182,13 +181,13 @@ func (v *Video) UpdateVideo(ctx context.Context, req *model.UpdateVideoRequest) 
 
 func (v *Video) updateRegencyOrCategory(ctx context.Context, req *model.UpdateVideoRequest, data *model.VideoResponse) error {
 	if req.CategoryID != nil {
-		if _, err := v.repo.GetCategoryNameByID(ctx, helper.GetInt64FromPointer(req.CategoryID)); err != nil {
+		if _, err := v.repo.GetCategoryNameByID(ctx, converter.GetInt64FromPointer(req.CategoryID)); err != nil {
 			return err
 		}
 	}
 
 	if req.RegencyID != nil {
-		if _, err := v.repo.GetLocationByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
+		if _, err := v.repo.GetLocationByID(ctx, converter.GetInt64FromPointer(req.RegencyID)); err != nil {
 			return err
 		}
 	}
@@ -247,12 +246,12 @@ func (v *Video) appendVideoData(ctx context.Context, data []*model.VideoResponse
 			Title: video.Title.String,
 			Category: &model.Category{
 				ID:   video.CategoryID.Int64,
-				Name: helper.GetStringFromPointer(categoryName),
+				Name: converter.GetStringFromPointer(categoryName),
 			},
 			Source:             video.Source.String,
 			VideoURL:           video.VideoURL.String,
 			Regency:            location,
-			IsPushNotification: helper.ConvertBoolFromInteger(video.IsPushNotification.Int64),
+			IsPushNotification: converter.ConvertBoolFromInteger(video.IsPushNotification.Int64),
 			TotalLikes:         video.TotalLikes.Int64,
 			Status:             video.Status.Int64,
 			CreatedAt:          video.CreatedAt.Int64,

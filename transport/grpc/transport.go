@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/sapawarga/video-service/endpoint"
-	"github.com/sapawarga/video-service/helper"
+	"github.com/sapawarga/video-service/lib/converter"
 	"github.com/sapawarga/video-service/usecase"
 
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
@@ -61,8 +61,8 @@ func MakeHandler(ctx context.Context, fs usecase.UsecaseI) transportVideo.VideoH
 func decodingGetListVideoRequest(ctx context.Context, r interface{}) (interface{}, error) {
 	req := r.(*transportVideo.GetListVideoRequest)
 	return &endpoint.GetVideoRequest{
-		RegencyID: helper.SetPointerInt64(req.GetRegencyId()),
-		Page:      helper.SetPointerInt64(req.GetPage()),
+		RegencyID: converter.SetPointerInt64(req.GetRegencyId()),
+		Page:      converter.SetPointerInt64(req.GetPage()),
 	}, nil
 }
 
@@ -111,8 +111,8 @@ func encodingGetDetailResponse(ctx context.Context, r interface{}) (interface{},
 		Source:       resp.Source,
 		VideoUrl:     resp.VideoURL,
 		Status:       resp.Status,
-		CreatedBy:    helper.GetInt64FromPointer(resp.CreatedBy),
-		UpdatedBy:    helper.GetInt64FromPointer(resp.UpdatedBy),
+		CreatedBy:    converter.GetInt64FromPointer(resp.CreatedBy),
+		UpdatedBy:    converter.GetInt64FromPointer(resp.UpdatedBy),
 	}, nil
 
 }
@@ -141,12 +141,12 @@ func decodingCreateNewVideoRequest(ctx context.Context, r interface{}) (interfac
 	req := r.(*transportVideo.CreateVideoRequest)
 
 	return &endpoint.CreateVideoRequest{
-		Title:      helper.SetPointerString(req.GetSource()),
-		Source:     helper.SetPointerString(req.GetSource()),
-		CategoryID: helper.SetPointerInt64(req.GetCategoryId()),
-		RegencyID:  helper.SetPointerInt64(req.GetRegencyId()),
-		VideoURL:   helper.SetPointerString(req.GetVideoUrl()),
-		Status:     &req.Status,
+		Title:      converter.SetPointerString(req.GetSource()),
+		Source:     converter.SetPointerString(req.GetSource()),
+		CategoryID: converter.SetPointerInt64(req.GetCategoryId()),
+		RegencyID:  converter.SetPointerInt64(req.GetRegencyId()),
+		VideoURL:   converter.SetPointerString(req.GetVideoUrl()),
+		Status:     converter.SetPointerInt64(req.GetStatus()),
 	}, nil
 }
 
@@ -163,12 +163,12 @@ func decodingUpdateVideo(ctx context.Context, r interface{}) (interface{}, error
 	req := r.(*transportVideo.UpdateVideoRequest)
 
 	return &endpoint.UpdateVideoRequest{
-		ID:         helper.SetPointerInt64(req.GetId()),
-		Title:      helper.SetPointerString(req.GetTitle()),
-		Source:     helper.SetPointerString(req.GetSource()),
-		CategoryID: helper.SetPointerInt64(req.GetCategoryId()),
-		RegencyID:  helper.SetPointerInt64(req.GetRegencyId()),
-		VideoURL:   helper.SetPointerString(req.GetVideoUrl()),
-		Status:     helper.SetPointerInt64(req.GetStatus()),
+		ID:         converter.SetPointerInt64(req.GetId()),
+		Title:      converter.SetPointerString(req.GetTitle()),
+		Source:     converter.SetPointerString(req.GetSource()),
+		CategoryID: converter.SetPointerInt64(req.GetCategoryId()),
+		RegencyID:  converter.SetPointerInt64(req.GetRegencyId()),
+		VideoURL:   converter.SetPointerString(req.GetVideoUrl()),
+		Status:     converter.SetPointerInt64(req.GetStatus()),
 	}, nil
 }
