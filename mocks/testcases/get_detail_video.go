@@ -15,8 +15,8 @@ var videoDetail = &model.VideoResponse{
 	VideoURL:   sql.NullString{String: "https://youtube.com/UDOHE", Valid: true},
 	RegencyID:  sql.NullInt64{Int64: 1, Valid: true},
 	Status:     sql.NullInt64{Int64: 10, Valid: true},
-	CreatedAt:  sql.NullTime{Time: currentTime, Valid: true},
-	UpdatedAt:  sql.NullTime{Time: currentTime, Valid: true},
+	CreatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
+	UpdatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
 	CreatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 	UpdatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 }
@@ -31,8 +31,8 @@ type ResponseGetCategoryName struct {
 	Error  error
 }
 
-type ResponseGetLocationName struct {
-	Result *string
+type ResponseGetLocation struct {
+	Result *model.Location
 	Error  error
 }
 
@@ -48,12 +48,16 @@ type GetDetailVideo struct {
 	GetLocationName       int64
 	GetCategoryName       int64
 	MockGetDetailRepo     ResponseGetDetailVideo
-	MockGetLocationName   ResponseGetLocationName
+	MockGetLocation       ResponseGetLocation
 	MockGetCategoryName   ResponseGetCategoryName
 	MockUsecaseResponse   ResponseUsecaseGetDetail
 }
 
-var location = helper.SetPointerString("regency")
+var location = &model.Location{
+	ID:      1,
+	BPSCode: "code",
+	Name:    "location",
+}
 var categoryName = helper.SetPointerString("category")
 
 var GetDetailVideoData = []GetDetailVideo{
@@ -67,7 +71,7 @@ var GetDetailVideoData = []GetDetailVideo{
 			Result: videoDetail,
 			Error:  nil,
 		},
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
@@ -77,18 +81,17 @@ var GetDetailVideoData = []GetDetailVideo{
 		},
 		MockUsecaseResponse: ResponseUsecaseGetDetail{
 			Result: &model.VideoDetail{
-				ID:          videoDetail.ID,
-				Title:       videoDetail.Title.String,
-				Category:    category,
-				Source:      videoDetail.Source.String,
-				VideoURL:    videoDetail.VideoURL.String,
-				RegencyID:   helper.SetPointerInt64(videoDetail.RegencyID.Int64),
-				RegencyName: location,
-				Status:      videoDetail.Status.Int64,
-				CreatedAt:   helper.SetPointerTime(videoDetail.CreatedAt.Time),
-				UpdatedAt:   helper.SetPointerTime(videoDetail.UpdatedAt.Time),
-				CreatedBy:   helper.SetPointerInt64(videoDetail.CreatedBy.Int64),
-				UpdatedBy:   helper.SetPointerInt64(videoDetail.UpdatedBy.Int64),
+				ID:        videoDetail.ID,
+				Title:     videoDetail.Title.String,
+				Category:  category,
+				Source:    videoDetail.Source.String,
+				VideoURL:  videoDetail.VideoURL.String,
+				Regency:   location,
+				Status:    videoDetail.Status.Int64,
+				CreatedAt: helper.SetPointerInt64(videoDetail.CreatedAt.Int64),
+				UpdatedAt: helper.SetPointerInt64(videoDetail.UpdatedAt.Int64),
+				CreatedBy: helper.SetPointerInt64(videoDetail.CreatedBy.Int64),
+				UpdatedBy: helper.SetPointerInt64(videoDetail.UpdatedBy.Int64),
 			},
 			Error: nil,
 		},
@@ -102,7 +105,7 @@ var GetDetailVideoData = []GetDetailVideo{
 			Result: nil,
 			Error:  sql.ErrNoRows,
 		},
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
@@ -124,7 +127,7 @@ var GetDetailVideoData = []GetDetailVideo{
 			Result: videoDetail,
 			Error:  nil,
 		},
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: nil,
 			Error:  sql.ErrNoRows,
 		},
@@ -146,7 +149,7 @@ var GetDetailVideoData = []GetDetailVideo{
 			Result: videoDetail,
 			Error:  nil,
 		},
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},

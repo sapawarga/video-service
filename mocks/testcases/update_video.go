@@ -25,7 +25,7 @@ type UpdateVideo struct {
 	GetLocationName       int64
 	GetCategoryName       int64
 	RepositoryRequest     *model.UpdateVideoRequest
-	MockGetLocationName   ResponseGetLocationName
+	MockGetLocation       ResponseGetLocation
 	MockGetCategoryName   ResponseGetCategoryName
 	MockVideoDetail       ResponseGetDetailVideo
 	MockRepository        error
@@ -40,7 +40,7 @@ var UpdateVideoData = []UpdateVideo{
 		GetCategoryName:       1,
 		GetDetailVideoRequest: 1,
 		RepositoryRequest:     videoUpdate,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
@@ -61,7 +61,7 @@ var UpdateVideoData = []UpdateVideo{
 		GetCategoryName:       1,
 		GetDetailVideoRequest: 1,
 		RepositoryRequest:     videoUpdate,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
@@ -82,7 +82,7 @@ var UpdateVideoData = []UpdateVideo{
 		GetCategoryName:       1,
 		GetDetailVideoRequest: 1,
 		RepositoryRequest:     videoUpdate,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: nil,
 			Error:  sql.ErrNoRows,
 		},
@@ -103,7 +103,7 @@ var UpdateVideoData = []UpdateVideo{
 		GetCategoryName:       1,
 		GetDetailVideoRequest: 1,
 		RepositoryRequest:     videoUpdate,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
@@ -124,7 +124,7 @@ var UpdateVideoData = []UpdateVideo{
 		GetCategoryName:       1,
 		GetDetailVideoRequest: 1,
 		RepositoryRequest:     videoUpdate,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},

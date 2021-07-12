@@ -77,12 +77,8 @@ func encodingGetListVideoResponse(ctx context.Context, r interface{}) (interface
 			CategoryId: v.Category.ID,
 			Source:     v.Source,
 			VideoUrl:   v.VideoURL,
-			RegencyId:  v.RegencyID,
 			Status:     v.Status,
-			CreatedAt:  v.CreatedAt.String(),
-			UpdatedAt:  v.UpdatedAt.String(),
 			CreatedBy:  v.CreatedBy,
-			UpdatedBy:  v.UpdatedBy,
 		}
 		videoResp = append(videoResp, video)
 	}
@@ -114,11 +110,7 @@ func encodingGetDetailResponse(ctx context.Context, r interface{}) (interface{},
 		CategoryName: resp.Cateogry.Name,
 		Source:       resp.Source,
 		VideoUrl:     resp.VideoURL,
-		RegencyId:    helper.GetInt64FromPointer(resp.RegencyID),
-		RegencyName:  helper.GetStringFromPointer(resp.RegencyName),
 		Status:       resp.Status,
-		CreatedAt:    resp.CreatedAt.String(),
-		UpdatedAt:    resp.UpdatedAt.String(),
 		CreatedBy:    helper.GetInt64FromPointer(resp.CreatedBy),
 		UpdatedBy:    helper.GetInt64FromPointer(resp.UpdatedBy),
 	}, nil

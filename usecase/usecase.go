@@ -61,10 +61,10 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 			return nil, err
 		}
 
-		totalPage := math.Ceil(float64(helper.GetInt64FromPointer(total)) / float64(limit))
-		meta.Page = helper.GetInt64FromPointer(req.Page)
-		meta.TotalPage = totalPage
+		meta.Page = limit
+		meta.TotalPage = math.Ceil(float64(helper.GetInt64FromPointer(total)) / float64(limit))
 		meta.Total = helper.GetInt64FromPointer(total)
+		meta.CurrentPage = helper.GetInt64FromPointer(req.Page)
 	}
 
 	return &model.VideoWithMetadata{
@@ -82,15 +82,18 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 	}
 
 	result := &model.VideoDetail{
-		ID:        resp.ID,
-		Title:     resp.Title.String,
-		Source:    resp.Source.String,
-		VideoURL:  resp.VideoURL.String,
-		Status:    resp.Status.Int64,
-		CreatedAt: helper.SetPointerTime(resp.CreatedAt.Time),
-		UpdatedAt: helper.SetPointerTime(resp.UpdatedAt.Time),
-		CreatedBy: helper.SetPointerInt64(resp.CreatedBy.Int64),
-		UpdatedBy: helper.SetPointerInt64(resp.UpdatedBy.Int64),
+		ID:                 resp.ID,
+		Title:              resp.Title.String,
+		Source:             resp.Source.String,
+		VideoURL:           resp.VideoURL.String,
+		Status:             resp.Status.Int64,
+		Sequence:           resp.Sequence.Int64,
+		TotalLikes:         resp.TotalLikes.Int64,
+		IsPushNotification: model.BoolFromInt[resp.IsPushNotification.Int64],
+		CreatedAt:          helper.SetPointerInt64(resp.CreatedAt.Int64),
+		UpdatedAt:          helper.SetPointerInt64(resp.UpdatedAt.Int64),
+		CreatedBy:          helper.SetPointerInt64(resp.CreatedBy.Int64),
+		UpdatedBy:          helper.SetPointerInt64(resp.UpdatedBy.Int64),
 	}
 
 	if resp.CategoryID.Valid {
@@ -105,13 +108,12 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 		}
 	}
 	if resp.RegencyID.Valid {
-		name, err := v.repo.GetLocationNameByID(ctx, resp.RegencyID.Int64)
+		location, err := v.repo.GetLocationByID(ctx, resp.RegencyID.Int64)
 		if err != nil {
 			level.Error(logger).Log("error_get_location", err)
 			return nil, err
 		}
-		result.RegencyID = helper.SetPointerInt64(resp.RegencyID.Int64)
-		result.RegencyName = name
+		result.Regency = location
 	}
 
 	return result, nil
@@ -124,6 +126,14 @@ func (v *Video) GetStatisticVideo(ctx context.Context) ([]*model.VideoStatisticU
 		level.Error(logger).Log("error_get_video_statistic", err)
 		return nil, err
 	}
+
+	// total, err := v.repo.GetMetadataVideo(ctx, &model.GetListVideoRepoRequest{
+	// 	RegencyID: nil,
+	// })
+	// if err != nil {
+	// 	level.Error(logger).Log("error_get_metadata", err)
+	// 	return nil, err
+	// }
 
 	result := make([]*model.VideoStatisticUC, 0)
 	for _, v := range resp {
@@ -146,7 +156,7 @@ func (v *Video) CreateNewVideo(ctx context.Context, req *model.CreateVideoReques
 	}
 
 	if req.RegencyID != nil {
-		if _, err = v.repo.GetLocationNameByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
+		if _, err = v.repo.GetLocationByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
 			level.Error(logger).Log("error_get_regency", err)
 			return err
 		}
@@ -186,7 +196,7 @@ func (v *Video) updateRegencyOrCategory(ctx context.Context, req *model.UpdateVi
 	}
 
 	if req.RegencyID != nil {
-		if _, err := v.repo.GetLocationNameByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
+		if _, err := v.repo.GetLocationByID(ctx, helper.GetInt64FromPointer(req.RegencyID)); err != nil {
 			return err
 		}
 	}
@@ -231,6 +241,15 @@ func (v *Video) appendVideoData(ctx context.Context, data []*model.VideoResponse
 		if err != nil {
 			return nil, err
 		}
+
+		var location *model.Location
+		if video.RegencyID.Valid {
+			location, err = v.repo.GetLocationByID(ctx, video.RegencyID.Int64)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		video := &model.Video{
 			ID:    video.ID,
 			Title: video.Title.String,
@@ -240,12 +259,12 @@ func (v *Video) appendVideoData(ctx context.Context, data []*model.VideoResponse
 			},
 			Source:             video.Source.String,
 			VideoURL:           video.VideoURL.String,
-			RegencyID:          video.RegencyID.Int64,
+			Regency:            location,
 			IsPushNotification: helper.ConvertBoolFromInteger(video.IsPushNotification.Int64),
 			TotalLikes:         video.TotalLikes.Int64,
 			Status:             video.Status.Int64,
-			CreatedAt:          video.CreatedAt.Time,
-			UpdatedAt:          video.UpdatedAt.Time,
+			CreatedAt:          video.CreatedAt.Int64,
+			UpdatedAt:          video.UpdatedAt.Int64,
 			CreatedBy:          video.CreatedBy.Int64,
 			UpdatedBy:          video.UpdatedBy.Int64,
 		}

@@ -1,11 +1,13 @@
 package model
 
+// GetListVideoRequest ...
 type GetListVideoRequest struct {
 	RegencyID *int64
 	Page      *int64
 	Limit     *int64
 }
 
+// CreateVideoRequest ...
 type CreateVideoRequest struct {
 	Title      string
 	Source     string
@@ -13,8 +15,10 @@ type CreateVideoRequest struct {
 	RegencyID  *int64
 	VideoURL   string
 	Status     int64
+	Sequence   int64
 }
 
+// UpdateVideoRequest ...
 type UpdateVideoRequest struct {
 	ID         *int64
 	Title      *string
@@ -23,4 +27,5 @@ type UpdateVideoRequest struct {
 	RegencyID  *int64
 	VideoURL   *string
 	Status     *int64
+	Sequence   *int64
 }

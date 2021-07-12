@@ -8,7 +8,7 @@ import (
 	"github.com/sapawarga/video-service/model"
 )
 
-var currentTime, _ = helper.GetCurrentTimeUTC()
+var _, currentTime = helper.GetCurrentTimeUTC()
 var category = &model.Category{
 	ID:   1,
 	Name: "category",
@@ -22,8 +22,8 @@ var videoResponses = []*model.VideoResponse{
 		VideoURL:   sql.NullString{String: "https://youtube.com/UDOHE", Valid: true},
 		RegencyID:  sql.NullInt64{Int64: 1, Valid: true},
 		Status:     sql.NullInt64{Int64: 10, Valid: true},
-		CreatedAt:  sql.NullTime{Time: currentTime, Valid: true},
-		UpdatedAt:  sql.NullTime{Time: currentTime, Valid: true},
+		CreatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
+		UpdatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
 		CreatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 		UpdatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 	}, {
@@ -34,8 +34,8 @@ var videoResponses = []*model.VideoResponse{
 		VideoURL:   sql.NullString{String: "https://youtube.com/UDOHE", Valid: true},
 		RegencyID:  sql.NullInt64{Int64: 1, Valid: true},
 		Status:     sql.NullInt64{Int64: 10, Valid: true},
-		CreatedAt:  sql.NullTime{Time: currentTime, Valid: true},
-		UpdatedAt:  sql.NullTime{Time: currentTime, Valid: true},
+		CreatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
+		UpdatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
 		CreatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 		UpdatedBy:  sql.NullInt64{Int64: 1, Valid: true},
 	},
@@ -48,7 +48,7 @@ var videoUsecase = []*model.Video{
 		Category:  category,
 		Source:    "youtube",
 		VideoURL:  "https://youtube.com/UDOHE",
-		RegencyID: 1,
+		Regency:   location,
 		Status:    10,
 		CreatedAt: currentTime,
 		UpdatedAt: currentTime,
@@ -60,7 +60,7 @@ var videoUsecase = []*model.Video{
 		Category:  category,
 		Source:    "youtube",
 		VideoURL:  "https://youtube.com/UDOHE",
-		RegencyID: 1,
+		Regency:   location,
 		Status:    10,
 		CreatedAt: currentTime,
 		UpdatedAt: currentTime,

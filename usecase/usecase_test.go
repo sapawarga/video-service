@@ -53,7 +53,7 @@ var _ = Describe("Usecase", func() {
 		data := testcases.GetDetailVideoData[idx]
 		mockVideoRepo.EXPECT().GetDetailVideo(ctx, data.GetVideoDetailRequest).Return(data.MockGetDetailRepo.Result, data.MockGetDetailRepo.Error).Times(1)
 		mockVideoRepo.EXPECT().GetCategoryNameByID(ctx, data.GetCategoryName).Return(data.MockGetCategoryName.Result, data.MockGetCategoryName.Error).Times(1)
-		mockVideoRepo.EXPECT().GetLocationNameByID(ctx, data.GetLocationName).Return(data.MockGetLocationName.Result, data.MockGetLocationName.Error).Times(1)
+		mockVideoRepo.EXPECT().GetLocationByID(ctx, data.GetLocationName).Return(data.MockGetLocation.Result, data.MockGetLocation.Error).Times(1)
 		resp, err := video.GetDetailVideo(ctx, data.UsecaseRequest)
 		if err != nil {
 			Expect(err).NotTo(BeNil())
@@ -80,7 +80,7 @@ var _ = Describe("Usecase", func() {
 		ctx := context.Background()
 		data := testcases.CreateNewVideoData[idx]
 		mockVideoRepo.EXPECT().GetCategoryNameByID(ctx, data.GetCategoryName).Return(data.MockGetCategoryName.Result, data.MockGetCategoryName.Error).Times(1)
-		mockVideoRepo.EXPECT().GetLocationNameByID(ctx, data.GetLocationName).Return(data.MockGetLocationName.Result, data.MockGetLocationName.Error).Times(1)
+		mockVideoRepo.EXPECT().GetLocationByID(ctx, data.GetLocationName).Return(data.MockGetLocation.Result, data.MockGetLocation.Error).Times(1)
 		mockVideoRepo.EXPECT().Insert(ctx, data.RepositoryRequest).Return(data.MockRepository).Times(1)
 		if err := video.CreateNewVideo(ctx, data.UsecaseRequest); err != nil {
 			Expect(err).NotTo(BeNil())
@@ -93,7 +93,7 @@ var _ = Describe("Usecase", func() {
 		ctx := context.Background()
 		data := testcases.UpdateVideoData[idx]
 		mockVideoRepo.EXPECT().GetCategoryNameByID(ctx, data.GetCategoryName).Return(data.MockGetCategoryName.Result, data.MockGetCategoryName.Error).Times(1)
-		mockVideoRepo.EXPECT().GetLocationNameByID(ctx, data.GetLocationName).Return(data.MockGetLocationName.Result, data.MockGetLocationName.Error).Times(1)
+		mockVideoRepo.EXPECT().GetLocationByID(ctx, data.GetLocationName).Return(data.MockGetLocation.Result, data.MockGetLocation.Error).Times(1)
 		mockVideoRepo.EXPECT().GetDetailVideo(ctx, data.GetDetailVideoRequest).Return(data.MockVideoDetail.Result, data.MockVideoDetail.Error).Times(1)
 		mockVideoRepo.EXPECT().Update(ctx, data.RepositoryRequest).Return(data.MockRepository).Times(1)
 		if err := video.UpdateVideo(ctx, data.UsecaseRequest); err != nil {

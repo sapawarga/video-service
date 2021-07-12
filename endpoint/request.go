@@ -22,9 +22,10 @@ type CreateVideoRequest struct {
 	Title      *string `json:"title"`
 	Source     *string `json:"source"`
 	CategoryID *int64  `json:"category_id"`
-	RegencyID  *int64  `json:"regency_id"`
+	RegencyID  *int64  `json:"kabkota_id"`
 	VideoURL   *string `json:"video_url"`
 	Status     *int64  `json:"status"`
+	Sequence   *int64  `json:"seq"`
 }
 
 type UpdateVideoRequest struct {
@@ -32,9 +33,10 @@ type UpdateVideoRequest struct {
 	Title      *string `json:"title"`
 	Source     *string `json:"source"`
 	CategoryID *int64  `json:"category_id"`
-	RegencyID  *int64  `json:"regency_id"`
+	RegencyID  *int64  `json:"kabkota_id"`
 	VideoURL   *string `json:"video_url"`
 	Status     *int64  `json:"status"`
+	Sequence   *int64  `json:"seq"`
 }
 
 func ValidateInputs(in interface{}) error {

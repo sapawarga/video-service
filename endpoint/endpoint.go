@@ -9,6 +9,7 @@ import (
 	"github.com/sapawarga/video-service/usecase"
 )
 
+// MakeGetListVideo ...
 func MakeGetListVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(*GetVideoRequest)
@@ -21,15 +22,11 @@ func MakeGetListVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoin
 			return nil, err
 		}
 
-		return &VideoWithMeta{
-			Data: &VideoResponse{
-				Data:     resp.Data,
-				Metadata: resp.Metadata,
-			},
-		}, nil
+		return resp, nil
 	}
 }
 
+// MakeGetDetailVideo ...
 func MakeGetDetailVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(*RequestID)
@@ -38,23 +35,36 @@ func MakeGetDetailVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 			return nil, err
 		}
 
-		return &VideoDetail{
-			ID:          resp.ID,
-			Title:       resp.Title,
-			Cateogry:    resp.Category,
-			Source:      resp.Source,
-			VideoURL:    resp.VideoURL,
-			RegencyID:   resp.RegencyID,
-			RegencyName: resp.RegencyName,
-			Status:      resp.Status,
-			CreatedAt:   resp.CreatedAt,
-			UpdatedAt:   resp.UpdatedAt,
-			CreatedBy:   resp.CreatedBy,
-			UpdatedBy:   resp.UpdatedBy,
-		}, nil
+		data := &VideoDetail{
+			ID:                 resp.ID,
+			Title:              resp.Title,
+			TotalLikes:         resp.TotalLikes,
+			IsPushNotification: resp.IsPushNotification,
+			Sequence:           resp.Sequence,
+			Cateogry:           resp.Category,
+			Source:             resp.Source,
+			VideoURL:           resp.VideoURL,
+			Status:             resp.Status,
+			CreatedAt:          resp.CreatedAt,
+			UpdatedAt:          resp.UpdatedAt,
+			CreatedBy:          resp.CreatedBy,
+			UpdatedBy:          resp.UpdatedBy,
+			StatusLabel:        GetStatusLabel[resp.Status]["id"],
+		}
+
+		if resp.Regency != nil {
+			data.RegencyID = helper.SetPointerInt64(resp.Regency.ID)
+			data.Regency = resp.Regency
+		}
+
+		result := map[string]interface{}{
+			"data": data,
+		}
+		return result, nil
 	}
 }
 
+// MakeGetVideoStatistic ...
 func MakeGetVideoStatistic(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		resp, err := fs.GetStatisticVideo(ctx)
@@ -62,12 +72,24 @@ func MakeGetVideoStatistic(ctx context.Context, fs usecase.UsecaseI) endpoint.En
 			return nil, err
 		}
 
-		return &VideoStatisticResponse{
-			Data: resp,
+		meta := &model.Metadata{
+			Page:        20,
+			TotalPage:   1,
+			CurrentPage: 1,
+			Total:       int64(len(resp)),
+		}
+
+		data := &VideoStatisticResponse{
+			Data:     resp,
+			Metadata: meta,
+		}
+		return map[string]interface{}{
+			"data": data,
 		}, nil
 	}
 }
 
+// MakeCreateNewVideo ...
 func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(*CreateVideoRequest)
@@ -80,6 +102,7 @@ func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 			Source:     helper.GetStringFromPointer(req.Source),
 			CategoryID: helper.GetInt64FromPointer(req.CategoryID),
 			RegencyID:  req.RegencyID,
+			Sequence:   helper.GetInt64FromPointer(req.Sequence),
 			VideoURL:   helper.GetStringFromPointer(req.VideoURL),
 			Status:     helper.GetInt64FromPointer(req.Status),
 		}); err != nil {
@@ -108,6 +131,7 @@ func MakeUpdateVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 			RegencyID:  req.RegencyID,
 			VideoURL:   req.VideoURL,
 			Status:     req.Status,
+			Sequence:   req.Sequence,
 		}); err != nil {
 			return nil, err
 		}

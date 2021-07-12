@@ -23,7 +23,7 @@ type CreateNewVideo struct {
 	GetLocationName     int64
 	GetCategoryName     int64
 	RepositoryRequest   *model.CreateVideoRequest
-	MockGetLocationName ResponseGetLocationName
+	MockGetLocation     ResponseGetLocation
 	MockGetCategoryName ResponseGetCategoryName
 	MockRepository      error
 	MockUsecase         error
@@ -36,7 +36,7 @@ var CreateNewVideoData = []CreateNewVideo{
 		GetLocationName:   1,
 		GetCategoryName:   1,
 		RepositoryRequest: newVideoRequest,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
@@ -52,7 +52,7 @@ var CreateNewVideoData = []CreateNewVideo{
 		GetLocationName:   1,
 		GetCategoryName:   1,
 		RepositoryRequest: newVideoRequest,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
@@ -68,7 +68,7 @@ var CreateNewVideoData = []CreateNewVideo{
 		GetLocationName:   1,
 		GetCategoryName:   1,
 		RepositoryRequest: newVideoRequest,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: nil,
 			Error:  sql.ErrNoRows,
 		},
@@ -84,7 +84,7 @@ var CreateNewVideoData = []CreateNewVideo{
 		GetLocationName:   1,
 		GetCategoryName:   1,
 		RepositoryRequest: newVideoRequest,
-		MockGetLocationName: ResponseGetLocationName{
+		MockGetLocation: ResponseGetLocation{
 			Result: location,
 			Error:  nil,
 		},
