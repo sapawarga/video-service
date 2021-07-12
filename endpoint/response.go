@@ -15,7 +15,7 @@ type VideoResponse struct {
 type VideoDetail struct {
 	ID                 int64           `json:"id"`
 	Title              string          `json:"title"`
-	Cateogry           *model.Category `json:"category"`
+	Category           *model.Category `json:"category"`
 	Source             string          `json:"source"`
 	VideoURL           string          `json:"video_url"`
 	TotalLikes         int64           `json:"total_likes"`
