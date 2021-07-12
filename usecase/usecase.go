@@ -127,14 +127,6 @@ func (v *Video) GetStatisticVideo(ctx context.Context) ([]*model.VideoStatisticU
 		return nil, err
 	}
 
-	// total, err := v.repo.GetMetadataVideo(ctx, &model.GetListVideoRepoRequest{
-	// 	RegencyID: nil,
-	// })
-	// if err != nil {
-	// 	level.Error(logger).Log("error_get_metadata", err)
-	// 	return nil, err
-	// }
-
 	result := make([]*model.VideoStatisticUC, 0)
 	for _, v := range resp {
 		result = append(result, &model.VideoStatisticUC{

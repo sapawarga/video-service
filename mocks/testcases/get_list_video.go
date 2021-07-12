@@ -83,11 +83,12 @@ type ResponseUsecase struct {
 	Result *model.VideoWithMetadata
 	Error  error
 }
-
 type GetListVideo struct {
 	Description             string
 	UsecaseRequest          model.GetListVideoRequest
 	GetListVideoRepoRequest model.GetListVideoRepoRequest
+	GetLocationByID         int64
+	MockGetLocationByID     ResponseGetLocation
 	MockGetListVideoRepo    ResponseGetListVideo
 	MockGetMetadata         ResponseMetadata
 	MockGetCategoryName     ResponseGetCategoryName
@@ -110,6 +111,11 @@ var GetListVideoData = []GetListVideo{
 			RegencyID: regencyID,
 			Limit:     limit,
 			Offset:    offset,
+		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: location,
+			Error:  nil,
 		},
 		MockGetListVideoRepo: ResponseGetListVideo{
 			Result: videoResponses,
@@ -143,6 +149,11 @@ var GetListVideoData = []GetListVideo{
 			Result: categoryName,
 			Error:  nil,
 		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: location,
+			Error:  nil,
+		},
 		GetListVideoRepoRequest: model.GetListVideoRepoRequest{
 			RegencyID: regencyID,
 			Limit:     limit,
@@ -171,6 +182,11 @@ var GetListVideoData = []GetListVideo{
 			Limit:     limit,
 			Offset:    offset,
 		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: location,
+			Error:  nil,
+		},
 		MockGetCategoryName: ResponseGetCategoryName{
 			Result: categoryName,
 			Error:  nil,
@@ -193,6 +209,11 @@ var GetListVideoData = []GetListVideo{
 			RegencyID: regencyID,
 			Page:      page,
 		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: location,
+			Error:  nil,
+		},
 		GetListVideoRepoRequest: model.GetListVideoRepoRequest{
 			RegencyID: regencyID,
 			Limit:     limit,
@@ -201,6 +222,38 @@ var GetListVideoData = []GetListVideo{
 		MockGetCategoryName: ResponseGetCategoryName{
 			Result: nil,
 			Error:  errors.New("something went wrong"),
+		},
+		MockGetListVideoRepo: ResponseGetListVideo{
+			Result: videoResponses,
+			Error:  nil,
+		},
+		MockGetMetadata: ResponseMetadata{
+			Result: nil,
+			Error:  nil,
+		},
+		MockUsecaseResponse: ResponseUsecase{
+			Result: nil,
+			Error:  errors.New("something went wrong"),
+		},
+	}, {
+		Description: "failed_get_locatioan",
+		UsecaseRequest: model.GetListVideoRequest{
+			RegencyID: regencyID,
+			Page:      page,
+		},
+		GetLocationByID: 1,
+		MockGetLocationByID: ResponseGetLocation{
+			Result: nil,
+			Error:  errors.New("something_went_wrong"),
+		},
+		GetListVideoRepoRequest: model.GetListVideoRepoRequest{
+			RegencyID: regencyID,
+			Limit:     limit,
+			Offset:    offset,
+		},
+		MockGetCategoryName: ResponseGetCategoryName{
+			Result: nil,
+			Error:  nil,
 		},
 		MockGetListVideoRepo: ResponseGetListVideo{
 			Result: videoResponses,
