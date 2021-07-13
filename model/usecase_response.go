@@ -1,8 +1,8 @@
 package model
 
 type VideoWithMetadata struct {
-	Data     []*Video
-	Metadata *Metadata
+	Data     []*Video  `json:"items"`
+	Metadata *Metadata `json:"_meta"`
 }
 
 type Metadata struct {

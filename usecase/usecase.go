@@ -37,8 +37,8 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 
 	request := &model.GetListVideoRepoRequest{
 		RegencyID: req.RegencyID,
-		Offset:    converter.SetPointerInt64(offset),
-		Limit:     converter.SetPointerInt64(limit),
+		Offset:    &offset,
+		Limit:     &limit,
 	}
 
 	resp, err := v.repo.GetListVideo(ctx, request)
@@ -82,27 +82,27 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 
 	result := &model.VideoDetail{
 		ID:                 resp.ID,
-		Title:              resp.Title.String,
-		Source:             resp.Source.String,
-		VideoURL:           resp.VideoURL.String,
-		Status:             resp.Status.Int64,
+		Title:              resp.Title,
+		Source:             resp.Source,
+		VideoURL:           resp.VideoURL,
+		Status:             resp.Status,
 		Sequence:           resp.Sequence.Int64,
 		TotalLikes:         resp.TotalLikes.Int64,
 		IsPushNotification: model.BoolFromInt[resp.IsPushNotification.Int64],
-		CreatedAt:          converter.SetPointerInt64(resp.CreatedAt.Int64),
-		UpdatedAt:          converter.SetPointerInt64(resp.UpdatedAt.Int64),
-		CreatedBy:          converter.SetPointerInt64(resp.CreatedBy.Int64),
-		UpdatedBy:          converter.SetPointerInt64(resp.UpdatedBy.Int64),
+		CreatedAt:          converter.SetPointerInt64(resp.CreatedAt),
+		UpdatedAt:          converter.SetPointerInt64(resp.UpdatedAt),
+		CreatedBy:          converter.SetPointerInt64(resp.CreatedBy),
+		UpdatedBy:          converter.SetPointerInt64(resp.UpdatedBy),
 	}
 
-	if resp.CategoryID.Valid {
-		name, err := v.repo.GetCategoryNameByID(ctx, resp.CategoryID.Int64)
+	if resp.CategoryID != 0 {
+		name, err := v.repo.GetCategoryNameByID(ctx, resp.CategoryID)
 		if err != nil {
 			level.Error(logger).Log("error_get_category", err)
 			return nil, err
 		}
 		result.Category = &model.Category{
-			ID:   resp.CategoryID.Int64,
+			ID:   resp.CategoryID,
 			Name: converter.GetStringFromPointer(name),
 		}
 	}
@@ -228,7 +228,7 @@ func (v *Video) CheckHealthReadiness(ctx context.Context) error {
 func (v *Video) appendVideoData(ctx context.Context, data []*model.VideoResponse) ([]*model.Video, error) {
 	result := make([]*model.Video, 0)
 	for _, video := range data {
-		categoryName, err := v.repo.GetCategoryNameByID(ctx, video.CategoryID.Int64)
+		categoryName, err := v.repo.GetCategoryNameByID(ctx, video.CategoryID)
 		if err != nil {
 			return nil, err
 		}
@@ -243,21 +243,21 @@ func (v *Video) appendVideoData(ctx context.Context, data []*model.VideoResponse
 
 		video := &model.Video{
 			ID:    video.ID,
-			Title: video.Title.String,
+			Title: video.Title,
 			Category: &model.Category{
-				ID:   video.CategoryID.Int64,
+				ID:   video.CategoryID,
 				Name: converter.GetStringFromPointer(categoryName),
 			},
-			Source:             video.Source.String,
-			VideoURL:           video.VideoURL.String,
+			Source:             video.Source,
+			VideoURL:           video.VideoURL,
 			Regency:            location,
 			IsPushNotification: converter.ConvertBoolFromInteger(video.IsPushNotification.Int64),
 			TotalLikes:         video.TotalLikes.Int64,
-			Status:             video.Status.Int64,
-			CreatedAt:          video.CreatedAt.Int64,
-			UpdatedAt:          video.UpdatedAt.Int64,
-			CreatedBy:          video.CreatedBy.Int64,
-			UpdatedBy:          video.UpdatedBy.Int64,
+			Status:             video.Status,
+			CreatedAt:          video.CreatedAt,
+			UpdatedAt:          video.UpdatedAt,
+			CreatedBy:          video.CreatedBy,
+			UpdatedBy:          video.UpdatedBy,
 		}
 		result = append(result, video)
 	}

@@ -9,16 +9,16 @@ import (
 
 var videoDetail = &model.VideoResponse{
 	ID:         1,
-	Title:      sql.NullString{String: "Test Video 1", Valid: true},
-	CategoryID: sql.NullInt64{Int64: 1, Valid: true},
-	Source:     sql.NullString{String: "youtube", Valid: true},
-	VideoURL:   sql.NullString{String: "https://youtube.com/UDOHE", Valid: true},
+	Title:      "Test Video 1",
+	CategoryID: 1,
+	Source:     "youtube",
+	VideoURL:   "https://youtube.com/UDOHE",
 	RegencyID:  sql.NullInt64{Int64: 1, Valid: true},
-	Status:     sql.NullInt64{Int64: 10, Valid: true},
-	CreatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
-	UpdatedAt:  sql.NullInt64{Int64: currentTime, Valid: true},
-	CreatedBy:  sql.NullInt64{Int64: 1, Valid: true},
-	UpdatedBy:  sql.NullInt64{Int64: 1, Valid: true},
+	Status:     10,
+	CreatedAt:  currentTime,
+	UpdatedAt:  currentTime,
+	CreatedBy:  1,
+	UpdatedBy:  1,
 }
 
 type ResponseGetDetailVideo struct {
@@ -55,8 +55,8 @@ type GetDetailVideo struct {
 
 var location = &model.Location{
 	ID:      1,
-	BPSCode: "code",
-	Name:    "location",
+	BPSCode: sql.NullString{String: "code", Valid: true},
+	Name:    sql.NullString{String: "location", Valid: true},
 }
 var categoryName = converter.SetPointerString("category")
 
@@ -82,16 +82,16 @@ var GetDetailVideoData = []GetDetailVideo{
 		MockUsecaseResponse: ResponseUsecaseGetDetail{
 			Result: &model.VideoDetail{
 				ID:        videoDetail.ID,
-				Title:     videoDetail.Title.String,
+				Title:     videoDetail.Title,
 				Category:  category,
-				Source:    videoDetail.Source.String,
-				VideoURL:  videoDetail.VideoURL.String,
+				Source:    videoDetail.Source,
+				VideoURL:  videoDetail.VideoURL,
 				Regency:   location,
-				Status:    videoDetail.Status.Int64,
-				CreatedAt: converter.SetPointerInt64(videoDetail.CreatedAt.Int64),
-				UpdatedAt: converter.SetPointerInt64(videoDetail.UpdatedAt.Int64),
-				CreatedBy: converter.SetPointerInt64(videoDetail.CreatedBy.Int64),
-				UpdatedBy: converter.SetPointerInt64(videoDetail.UpdatedBy.Int64),
+				Status:    videoDetail.Status,
+				CreatedAt: converter.SetPointerInt64(videoDetail.CreatedAt),
+				UpdatedAt: converter.SetPointerInt64(videoDetail.UpdatedAt),
+				CreatedBy: converter.SetPointerInt64(videoDetail.CreatedBy),
+				UpdatedBy: converter.SetPointerInt64(videoDetail.UpdatedBy),
 			},
 			Error: nil,
 		},
