@@ -34,10 +34,10 @@ func (r *VideoRepository) GetListVideo(ctx context.Context, req *model.GetListVi
 		SELECT
 			id, category_id, title, source, video_url, kabkota_id, status, total_likes, is_push_notification, created_at, seq,
 			updated_at, created_by, updated_by
-		FROM videos
+		FROM videos WHERE status <> -1
 	`)
-	if req.RegencyID != nil {
-		query.WriteString(" WHERE kabkota_id = ? ")
+	if req.RegencyID != nil && *req.RegencyID != 0 {
+		query.WriteString(" AND kabkota_id = ? ")
 		queryParams = append(queryParams, req.RegencyID)
 	}
 	if req.Limit != nil && req.Offset != nil {
@@ -65,10 +65,10 @@ func (r *VideoRepository) GetMetadataVideo(ctx context.Context, req *model.GetLi
 	var err error
 
 	query.WriteString(`
-		SELECT COUNT(1) FROM videos
+		SELECT COUNT(1) FROM videos WHERE status <> -1
 	`)
-	if req.RegencyID != nil {
-		query.WriteString(" WHERE kabkota_id = ? ")
+	if req.RegencyID != nil && *req.RegencyID != 0 {
+		query.WriteString(" AND kabkota_id = ? ")
 		queryParams = append(queryParams, req.RegencyID)
 	}
 
@@ -96,7 +96,7 @@ func (r *VideoRepository) GetDetailVideo(ctx context.Context, id int64) (*model.
 		updated_at, created_by, updated_by
 	FROM videos
 	`)
-	query.WriteString(" WHERE id = ? ")
+	query.WriteString(" WHERE id = ? AND status <> -1")
 
 	if ctx != nil {
 		err = r.conn.GetContext(ctx, result, query.String(), id)
@@ -140,18 +140,18 @@ func (r *VideoRepository) GetCategoryNameByID(ctx context.Context, id int64) (*s
 
 func (r *VideoRepository) GetLocationByID(ctx context.Context, id int64) (*model.Location, error) {
 	var query bytes.Buffer
-	var result *model.Location
+	var result = &model.Location{}
 	var err error
 
-	query.WriteString(`  SELECT id, name, code_bps FROM areas WHERE id = ? `)
+	query.WriteString(` SELECT id, name, code_bps FROM areas WHERE id = ? `)
 	if ctx != nil {
-		err = r.conn.GetContext(ctx, &result, query.String(), id)
+		err = r.conn.GetContext(ctx, result, query.String(), id)
 	} else {
-		err = r.conn.Get(&result, query.String(), id)
+		err = r.conn.Get(result, query.String(), id)
 	}
 
 	if err == sql.ErrNoRows {
-		return nil, sql.ErrNoRows
+		return nil, nil
 	}
 
 	if err != nil {

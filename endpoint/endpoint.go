@@ -23,7 +23,16 @@ func MakeGetListVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoin
 			return nil, err
 		}
 
-		return resp, nil
+		data := encodeResponse(resp.Data)
+
+		videoWithMeta := &VideoResponse{
+			Data:     data,
+			Metadata: resp.Metadata,
+		}
+
+		return map[string]interface{}{
+			"data": videoWithMeta,
+		}, nil
 	}
 }
 

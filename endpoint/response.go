@@ -31,11 +31,6 @@ type VideoDetail struct {
 	UpdatedBy          *int64          `json:"updated_by"`
 }
 
-// VideoWithMeta ...
-type VideoWithMeta struct {
-	Data *VideoResponse `json:"data"`
-}
-
 // VideoStatisticResponse ...
 type VideoStatisticResponse struct {
 	Data     []*model.VideoStatisticUC `json:"items"`
@@ -57,7 +52,7 @@ type Video struct {
 	Source             string          `json:"source"`
 	VideoURL           string          `json:"video_url"`
 	RegencyID          *int64          `json:"kabkota_id"`
-	Regency            *model.Location `json:"kabkota"`
+	Regency            *Location       `json:"kabkota"`
 	TotalLike          int64           `json:"total_likes"`
 	IsPushNotification bool            `json:"is_push_notification"`
 	Sequence           int64           `json:"seq"`
@@ -68,7 +63,14 @@ type Video struct {
 	CreatedBy          int64           `json:"created_by"`
 }
 
-func EncodeResponse(data []*model.Video) (result []*Video) {
+// Location ...
+type Location struct {
+	ID      int64  `json:"id"`
+	CodeBPS string `json:"code_bps"`
+	Name    string `json:"name"`
+}
+
+func encodeResponse(data []*model.Video) (result []*Video) {
 	if len(data) > 0 {
 		for _, v := range data {
 			encodeData := &Video{
@@ -78,8 +80,6 @@ func EncodeResponse(data []*model.Video) (result []*Video) {
 				Category:           v.Category,
 				Source:             v.Source,
 				VideoURL:           v.VideoURL,
-				RegencyID:          converter.SetPointerInt64(v.Regency.ID),
-				Regency:            v.Regency,
 				TotalLike:          v.TotalLikes,
 				IsPushNotification: v.IsPushNotification,
 				Sequence:           v.Sequence,
@@ -89,6 +89,16 @@ func EncodeResponse(data []*model.Video) (result []*Video) {
 				UpdatedAt:          v.UpdatedAt,
 				CreatedBy:          v.CreatedBy,
 			}
+			if v.Regency != nil {
+				location := &Location{
+					ID:      v.Regency.ID,
+					CodeBPS: v.Regency.BPSCode.String,
+					Name:    v.Regency.Name.String,
+				}
+				encodeData.RegencyID = converter.SetPointerInt64(v.Regency.ID)
+				encodeData.Regency = location
+			}
+
 			result = append(result, encodeData)
 		}
 	}
