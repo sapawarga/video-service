@@ -129,7 +129,8 @@ func encodeResponse(ctx context.Context, w http.ResponseWriter, response interfa
 			w.WriteHeader(http.StatusCreated)
 		} else if status.Code == constants.STATUS_UPDATED || status.Code == constants.STATUS_DELETED {
 			w.WriteHeader(http.StatusNoContent)
-			return json.NewEncoder(w).Encode(nil)
+			_ = json.NewEncoder(w).Encode(nil)
+			return nil
 		}
 	} else {
 		w.WriteHeader(http.StatusOK)
