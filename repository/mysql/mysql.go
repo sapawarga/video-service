@@ -237,35 +237,8 @@ func (r *VideoRepository) Update(ctx context.Context, params *model.UpdateVideoR
 	_, unixTime := generator.GetCurrentTimeUTC()
 
 	query.WriteString(` UPDATE videos SET`)
-	if params.CategoryID != nil {
-		query.WriteString(` category_id = :category_id`)
-		queryParams["category_id"] = converter.GetInt64FromPointer(params.CategoryID)
-	}
-	if params.Title != nil {
-		query.WriteString(updateNext(ctx, "title"))
-		queryParams["title"] = converter.GetStringFromPointer(params.Title)
-	}
-	if params.Source != nil {
-		query.WriteString(updateNext(ctx, "source"))
-		queryParams["source"] = converter.GetStringFromPointer(params.Source)
-	}
-	if params.VideoURL != nil {
-		query.WriteString(updateNext(ctx, "video_url"))
-		queryParams["video_url"] = converter.GetStringFromPointer(params.VideoURL)
-	}
-	if params.Status != nil {
-		query.WriteString(updateNext(ctx, "status"))
-		queryParams["status"] = converter.GetInt64FromPointer(params.Status)
-	}
-	if params.Sequence != nil {
-		query.WriteString(updateNext(ctx, "seq"))
-		queryParams["seq"] = converter.GetInt64FromPointer(params.Sequence)
-	}
-	if params.RegencyID != nil {
-		query.WriteString(updateNext(ctx, "kabkota_id"))
-		queryParams["kabkota_id"] = converter.GetInt64FromPointer(params.RegencyID)
-	}
-	query.WriteString(", created_at = :updated_at, updated_at = :updated_at WHERE id = :id")
+	query.WriteString(" status = :status, created_at = :updated_at, updated_at = :updated_at WHERE id = :id")
+	queryParams["status"] = converter.GetInt64FromPointer(params.Status)
 	queryParams["updated_at"] = unixTime
 	queryParams["id"] = params.ID
 
