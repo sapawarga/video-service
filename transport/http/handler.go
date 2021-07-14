@@ -51,7 +51,7 @@ func MakeHTTPHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Log
 	// TODO: handle token middleware
 	r.Handle("/videos/", processVideoGetList).Methods(constants.HTTP_GET)
 	r.Handle("/videos/", processCreateVideo).Methods(constants.HTTP_POST)
-	r.Handle("/videos/statistic", processGetVideoStatistic).Methods(constants.HTTP_GET)
+	r.Handle("/videos/statistics", processGetVideoStatistic).Methods(constants.HTTP_GET)
 	r.Handle("/videos/{id}", processGetDetailVideo).Methods(constants.HTTP_GET)
 	r.Handle("/videos/{id}", processUpdateVideo).Methods(constants.HTTP_PUT)
 	r.Handle("/videos/{id}", processDeleteVideo).Methods(constants.HTTP_DELETE)

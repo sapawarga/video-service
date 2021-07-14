@@ -261,8 +261,11 @@ func (r *VideoRepository) Update(ctx context.Context, params *model.UpdateVideoR
 		query.WriteString(updateNext(ctx, "seq"))
 		queryParams["seq"] = converter.GetInt64FromPointer(params.Sequence)
 	}
-	query.WriteString(" kabkota_id = :kabkota_id ,  created_at = :updated_at, updated_at = :updated_at WHERE id = :id")
-	queryParams["kabkota_id"] = converter.GetInt64FromPointer(params.RegencyID)
+	if params.RegencyID != nil {
+		query.WriteString(updateNext(ctx, "kabkota_id"))
+		queryParams["kabkota_id"] = converter.GetInt64FromPointer(params.RegencyID)
+	}
+	query.WriteString(", created_at = :updated_at, updated_at = :updated_at WHERE id = :id")
 	queryParams["updated_at"] = unixTime
 	queryParams["id"] = params.ID
 
