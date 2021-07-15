@@ -232,37 +232,42 @@ func (r *VideoRepository) Insert(ctx context.Context, params *model.CreateVideoR
 
 func (r *VideoRepository) Update(ctx context.Context, params *model.UpdateVideoRequest) error {
 	var query bytes.Buffer
+	var updatedField []string
 	var queryParams = make(map[string]interface{})
 	var err error
 	_, unixTime := generator.GetCurrentTimeUTC()
 
 	query.WriteString(` UPDATE videos SET`)
 	if params.CategoryID != nil {
-		query.WriteString(` category_id = :category_id`)
+		updatedField = append(updatedField, "category_id")
 		queryParams["category_id"] = converter.GetInt64FromPointer(params.CategoryID)
 	}
 	if params.Title != nil {
-		query.WriteString(updateNext(ctx, "title"))
+		updatedField = append(updatedField, "title")
 		queryParams["title"] = converter.GetStringFromPointer(params.Title)
 	}
 	if params.Source != nil {
-		query.WriteString(updateNext(ctx, "source"))
+		updatedField = append(updatedField, "source")
 		queryParams["source"] = converter.GetStringFromPointer(params.Source)
 	}
 	if params.VideoURL != nil {
-		query.WriteString(updateNext(ctx, "video_url"))
+		updatedField = append(updatedField, "video_url")
 		queryParams["video_url"] = converter.GetStringFromPointer(params.VideoURL)
 	}
 	if params.Status != nil {
-		query.WriteString(updateNext(ctx, "status"))
+		updatedField = append(updatedField, "status")
 		queryParams["status"] = converter.GetInt64FromPointer(params.Status)
 	}
 	if params.Sequence != nil {
-		query.WriteString(updateNext(ctx, "seq"))
+		updatedField = append(updatedField, "seq")
 		queryParams["seq"] = converter.GetInt64FromPointer(params.Sequence)
 	}
-	query.WriteString(" kabkota_id = :kabkota_id ,  created_at = :updated_at, updated_at = :updated_at WHERE id = :id")
-	queryParams["kabkota_id"] = converter.GetInt64FromPointer(params.RegencyID)
+	if params.RegencyID != nil {
+		updatedField = append(updatedField, "kabkota_id")
+		queryParams["kabkota_id"] = converter.GetInt64FromPointer(params.RegencyID)
+	}
+	query.WriteString(updateQuery(ctx, updatedField...))
+	query.WriteString(", updated_at = :updated_at WHERE id = :id")
 	queryParams["updated_at"] = unixTime
 	queryParams["id"] = params.ID
 
@@ -315,8 +320,13 @@ func (r *VideoRepository) HealthCheckReadiness(ctx context.Context) error {
 	return nil
 }
 
-func updateNext(ctx context.Context, field string) string {
+func updateQuery(ctx context.Context, fields ...string) string {
 	var query bytes.Buffer
-	query.WriteString(fmt.Sprintf(" , %s = :%s ", field, field))
+	query.WriteString(fmt.Sprintf(" %s = :%s ", fields[0], fields[0]))
+	if len(fields) > 1 {
+		for i := 1; i < len(fields); i++ {
+			query.WriteString(fmt.Sprintf(" , %s = :%s ", fields[i], fields[i]))
+		}
+	}
 	return query.String()
 }
