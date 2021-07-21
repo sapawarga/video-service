@@ -36,9 +36,11 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 	}
 
 	request := &model.GetListVideoRepoRequest{
-		RegencyID: req.RegencyID,
-		Offset:    &offset,
-		Limit:     &limit,
+		RegencyID:  req.RegencyID,
+		Offset:     &offset,
+		Limit:      &limit,
+		CategoryID: req.CategoryID,
+		Title:      req.Title,
 	}
 
 	resp, err := v.repo.GetListVideo(ctx, request)
@@ -78,6 +80,10 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 	if err != nil {
 		level.Error(logger).Log("error_get_detail", err)
 		return nil, err
+	}
+
+	if resp == nil {
+		return nil, nil
 	}
 
 	result := &model.VideoDetail{

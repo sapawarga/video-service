@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/sapawarga/video-service/lib/constants"
 	"github.com/sapawarga/video-service/lib/converter"
@@ -36,10 +35,8 @@ func (r *VideoRepository) GetListVideo(ctx context.Context, req *model.GetListVi
 			updated_at, created_by, updated_by
 		FROM videos WHERE status <> -1
 	`)
-	if req.RegencyID != nil && *req.RegencyID != 0 {
-		query.WriteString(" AND kabkota_id = ? ")
-		queryParams = append(queryParams, req.RegencyID)
-	}
+	querySelect, queryParams := selectQuery(ctx, query, req)
+	query.WriteString(querySelect.String())
 	if req.Limit != nil && req.Offset != nil {
 		query.WriteString(" LIMIT ?, ? ")
 		queryParams = append(queryParams, req.Offset, req.Limit)
@@ -67,10 +64,9 @@ func (r *VideoRepository) GetMetadataVideo(ctx context.Context, req *model.GetLi
 	query.WriteString(`
 		SELECT COUNT(1) FROM videos WHERE status <> -1
 	`)
-	if req.RegencyID != nil && *req.RegencyID != 0 {
-		query.WriteString(" AND kabkota_id = ? ")
-		queryParams = append(queryParams, req.RegencyID)
-	}
+
+	querySelect, queryParams := selectQuery(ctx, query, req)
+	query.WriteString(querySelect.String())
 
 	if ctx != nil {
 		err = r.conn.GetContext(ctx, &total, query.String(), queryParams...)
@@ -105,7 +101,7 @@ func (r *VideoRepository) GetDetailVideo(ctx context.Context, id int64) (*model.
 	}
 
 	if err == sql.ErrNoRows {
-		return nil, sql.ErrNoRows
+		return nil, nil
 	}
 
 	if err != nil {
@@ -318,15 +314,4 @@ func (r *VideoRepository) HealthCheckReadiness(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func updateQuery(ctx context.Context, fields ...string) string {
-	var query bytes.Buffer
-	query.WriteString(fmt.Sprintf(" %s = :%s ", fields[0], fields[0]))
-	if len(fields) > 1 {
-		for i := 1; i < len(fields); i++ {
-			query.WriteString(fmt.Sprintf(" , %s = :%s ", fields[i], fields[i]))
-		}
-	}
-	return query.String()
 }

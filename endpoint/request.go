@@ -9,9 +9,11 @@ import (
 )
 
 type GetVideoRequest struct {
-	RegencyID *int64 `json:"regency_id"`
-	Page      *int64 `json:"page"`
-	Limit     *int64 `json:"limit"`
+	RegencyID  *int64  `json:"regency_id"`
+	Page       *int64  `json:"page"`
+	Limit      *int64  `json:"limit"`
+	Title      *string `json:"title"`
+	CategoryID *int64  `json:"category_id"`
 }
 
 type RequestID struct {
@@ -19,13 +21,13 @@ type RequestID struct {
 }
 
 type CreateVideoRequest struct {
-	Title      *string `json:"title"`
-	Source     *string `json:"source"`
-	CategoryID *int64  `json:"category_id"`
-	RegencyID  *int64  `json:"kabkota_id"`
-	VideoURL   *string `json:"video_url"`
-	Status     *int64  `json:"status"`
-	Sequence   *int64  `json:"seq"`
+	Title      string `json:"title"`
+	Source     string `json:"source"`
+	CategoryID int64  `json:"category_id"`
+	RegencyID  *int64 `json:"kabkota_id"`
+	VideoURL   string `json:"video_url"`
+	Status     int64  `json:"status"`
+	Sequence   int64  `json:"seq"`
 }
 
 type UpdateVideoRequest struct {
@@ -46,7 +48,6 @@ func ValidateInputs(in interface{}) error {
 			validation.Field(&obj.Source, validation.Required, validation.In("youtube")),
 			validation.Field(&obj.CategoryID, validation.Required),
 			validation.Field(&obj.VideoURL, validation.Required, validation.Match(regexp.MustCompile("^(https://www.youtube.com/).+$"))),
-			validation.Field(&obj.Status, validation.Required, validation.In(constants.DELETED, constants.ACTIVED, constants.INACTIVED)),
 		)
 	} else if obj, ok := in.(*UpdateVideoRequest); ok {
 		return validation.ValidateStruct(obj,
@@ -55,9 +56,20 @@ func ValidateInputs(in interface{}) error {
 			validation.Field(&obj.Source, validation.In("youtube")),
 			validation.Field(&obj.CategoryID),
 			validation.Field(&obj.VideoURL, validation.Match(regexp.MustCompile("^(https://www.youtube.com/).+$"))),
-			validation.Field(&obj.Status, validation.In(constants.DELETED, constants.ACTIVED, constants.INACTIVED)),
+			validation.Field(&obj.Status, validation.In(constants.DELETED, constants.INACTIVED, constants.ACTIVED)),
 		)
 	}
 	return errors.New("format_struct_not_valid")
 
+}
+
+var Status = []int64{-1, 0, 10}
+
+func containsStatus(status []int64, val int64) bool {
+	for _, v := range status {
+		if v == val {
+			return true
+		}
+	}
+	return false
 }
