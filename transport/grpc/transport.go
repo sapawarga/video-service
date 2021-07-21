@@ -141,12 +141,12 @@ func decodingCreateNewVideoRequest(ctx context.Context, r interface{}) (interfac
 	req := r.(*transportVideo.CreateVideoRequest)
 
 	return &endpoint.CreateVideoRequest{
-		Title:      converter.SetPointerString(req.GetSource()),
-		Source:     converter.SetPointerString(req.GetSource()),
-		CategoryID: converter.SetPointerInt64(req.GetCategoryId()),
+		Title:      req.GetSource(),
+		Source:     req.GetSource(),
+		CategoryID: req.GetCategoryId(),
 		RegencyID:  converter.SetPointerInt64(req.GetRegencyId()),
-		VideoURL:   converter.SetPointerString(req.GetVideoUrl()),
-		Status:     converter.SetPointerInt64(req.GetStatus()),
+		VideoURL:   req.GetVideoUrl(),
+		Status:     req.GetStatus(),
 	}, nil
 }
 

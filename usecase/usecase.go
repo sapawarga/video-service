@@ -36,9 +36,11 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 	}
 
 	request := &model.GetListVideoRepoRequest{
-		RegencyID: req.RegencyID,
-		Offset:    &offset,
-		Limit:     &limit,
+		RegencyID:  req.RegencyID,
+		Offset:     &offset,
+		Limit:      &limit,
+		CategoryID: req.CategoryID,
+		Title:      req.Title,
 	}
 
 	resp, err := v.repo.GetListVideo(ctx, request)
@@ -80,6 +82,10 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 		return nil, err
 	}
 
+	if resp == nil {
+		return nil, nil
+	}
+
 	result := &model.VideoDetail{
 		ID:                 resp.ID,
 		Title:              resp.Title,
@@ -95,25 +101,14 @@ func (v *Video) GetDetailVideo(ctx context.Context, id int64) (*model.VideoDetai
 		UpdatedBy:          converter.SetPointerInt64(resp.UpdatedBy),
 	}
 
-	if resp.CategoryID != 0 {
-		name, err := v.repo.GetCategoryNameByID(ctx, resp.CategoryID)
-		if err != nil {
-			level.Error(logger).Log("error_get_category", err)
-			return nil, err
-		}
-		result.Category = &model.Category{
-			ID:   resp.CategoryID,
-			Name: converter.GetStringFromPointer(name),
-		}
+	videoData, err := v.appendVideoData(ctx, []*model.VideoResponse{resp})
+	if err != nil {
+		level.Error(logger).Log("error_get_detail", err)
+		return nil, err
 	}
-	if resp.RegencyID.Valid {
-		location, err := v.repo.GetLocationByID(ctx, resp.RegencyID.Int64)
-		if err != nil {
-			level.Error(logger).Log("error_get_location", err)
-			return nil, err
-		}
-		result.Regency = location
-	}
+
+	result.Category = videoData[0].Category
+	result.Regency = videoData[0].Regency
 
 	return result, nil
 }

@@ -60,9 +60,11 @@ func MakeHTTPHandler(ctx context.Context, fs usecase.UsecaseI, logger kitlog.Log
 }
 
 func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, error) {
-	regIDString := r.URL.Query().Get("regency_id")
+	regIDString := r.URL.Query().Get("kabkota_id")
 	pageString := r.URL.Query().Get("page")
 	limitString := r.URL.Query().Get("limit")
+	categoryIDString := r.URL.Query().Get("category_id")
+	title := r.URL.Query().Get("title")
 
 	if pageString == "0" || pageString == "" {
 		pageString = "1"
@@ -70,13 +72,28 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 	if limitString == "" || limitString == "0" {
 		limitString = "10"
 	}
-	regID, _ := converter.ConvertFromStringToInt64(regIDString)
+	_, regID := converter.ConvertFromStringToInt64(regIDString)
+	var pointerRegID *int64
+	if regID == 0 {
+		pointerRegID = nil
+	} else {
+		pointerRegID = &regID
+	}
 	pageInt, _ := converter.ConvertFromStringToInt64(pageString)
 	limit, _ := converter.ConvertFromStringToInt64(limitString)
+	_, categoryID := converter.ConvertFromStringToInt64(categoryIDString)
+	var pointerCatID *int64
+	if categoryID == 0 {
+		pointerCatID = nil
+	} else {
+		pointerCatID = &categoryID
+	}
 	request := &endpoint.GetVideoRequest{
-		RegencyID: regID,
-		Page:      pageInt,
-		Limit:     limit,
+		RegencyID:  pointerRegID,
+		Page:       pageInt,
+		Limit:      limit,
+		CategoryID: pointerCatID,
+		Title:      converter.SetPointerString(title),
 	}
 
 	return request, nil
@@ -112,6 +129,7 @@ func decodeUpdateVideo(ctx context.Context, r *http.Request) (interface{}, error
 	if err := json.NewDecoder(r.Body).Decode(reqBody); err != nil {
 		return nil, err
 	}
+
 	reqBody.ID = id
 	return reqBody, nil
 }
@@ -150,5 +168,4 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"error": err.Error(),
 	})
-
 }

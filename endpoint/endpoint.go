@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"context"
+	"errors"
 
 	"github.com/go-kit/kit/endpoint"
 	"github.com/sapawarga/video-service/lib/constants"
@@ -15,9 +16,11 @@ func MakeGetListVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoin
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(*GetVideoRequest)
 		resp, err := fs.GetListVideo(ctx, &model.GetListVideoRequest{
-			RegencyID: req.RegencyID,
-			Page:      req.Page,
-			Limit:     req.Limit,
+			RegencyID:  req.RegencyID,
+			Page:       req.Page,
+			Limit:      req.Limit,
+			CategoryID: req.CategoryID,
+			Title:      req.Title,
 		})
 		if err != nil {
 			return nil, err
@@ -45,26 +48,30 @@ func MakeGetDetailVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 			return nil, err
 		}
 
-		data := &VideoDetail{
-			ID:                 resp.ID,
-			Title:              resp.Title,
-			TotalLikes:         resp.TotalLikes,
-			IsPushNotification: resp.IsPushNotification,
-			Sequence:           resp.Sequence,
-			Category:           resp.Category,
-			Source:             resp.Source,
-			VideoURL:           resp.VideoURL,
-			Status:             resp.Status,
-			CreatedAt:          resp.CreatedAt,
-			UpdatedAt:          resp.UpdatedAt,
-			CreatedBy:          resp.CreatedBy,
-			UpdatedBy:          resp.UpdatedBy,
-			StatusLabel:        GetStatusLabel[resp.Status]["id"],
-		}
+		data := &VideoDetail{}
 
-		if resp.Regency != nil {
-			data.RegencyID = converter.SetPointerInt64(resp.Regency.ID)
-			data.Regency = resp.Regency
+		if resp != nil {
+			data.ID = resp.ID
+			data.Title = resp.Title
+			data.TotalLikes = resp.TotalLikes
+			data.IsPushNotification = resp.IsPushNotification
+			data.Sequence = resp.Sequence
+			data.Category = resp.Category
+			data.Source = resp.Source
+			data.VideoURL = resp.VideoURL
+			data.Status = resp.Status
+			data.CreatedAt = resp.CreatedAt
+			data.UpdatedAt = resp.UpdatedAt
+			data.CreatedBy = resp.CreatedBy
+			data.UpdatedBy = resp.UpdatedBy
+			data.StatusLabel = GetStatusLabel[resp.Status]["id"]
+
+			if resp.Regency != nil {
+				data.RegencyID = converter.SetPointerInt64(resp.Regency.ID)
+				data.Regency = resp.Regency
+			}
+		} else {
+			data = nil
 		}
 
 		result := map[string]interface{}{
@@ -107,14 +114,18 @@ func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 			return nil, err
 		}
 
+		if ok := containsStatus(Status, req.Status); !ok {
+			return nil, errors.New("status: must be a valid value")
+		}
+
 		if err = fs.CreateNewVideo(ctx, &model.CreateVideoRequest{
-			Title:      converter.GetStringFromPointer(req.Source),
-			Source:     converter.GetStringFromPointer(req.Source),
-			CategoryID: converter.GetInt64FromPointer(req.CategoryID),
+			Title:      req.Title,
+			Source:     req.Source,
+			CategoryID: req.CategoryID,
 			RegencyID:  req.RegencyID,
-			Sequence:   converter.GetInt64FromPointer(req.Sequence),
-			VideoURL:   converter.GetStringFromPointer(req.VideoURL),
-			Status:     converter.GetInt64FromPointer(req.Status),
+			Sequence:   req.Sequence,
+			VideoURL:   req.VideoURL,
+			Status:     req.Status,
 		}); err != nil {
 			return nil, err
 		}

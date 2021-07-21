@@ -2,9 +2,11 @@ package model
 
 // GetListVideoRequest ...
 type GetListVideoRequest struct {
-	RegencyID *int64
-	Page      *int64
-	Limit     *int64
+	RegencyID  *int64
+	Page       *int64
+	Limit      *int64
+	CategoryID *int64
+	Title      *string
 }
 
 // CreateVideoRequest ...
