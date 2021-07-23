@@ -56,6 +56,7 @@ func MakeGetDetailVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 			data.TotalLikes = resp.TotalLikes
 			data.IsPushNotification = resp.IsPushNotification
 			data.Sequence = resp.Sequence
+			data.CategoryID = resp.Category.ID
 			data.Category = resp.Category
 			data.Source = resp.Source
 			data.VideoURL = resp.VideoURL
