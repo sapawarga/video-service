@@ -15,6 +15,7 @@ type VideoResponse struct {
 type VideoDetail struct {
 	ID                 int64           `json:"id"`
 	Title              string          `json:"title"`
+	CategoryID         int64           `json:"category_id"`
 	Category           *model.Category `json:"category"`
 	Source             string          `json:"source"`
 	VideoURL           string          `json:"video_url"`
