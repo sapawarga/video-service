@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/sapawarga/video-service/lib/constants"
 	"github.com/sapawarga/video-service/lib/converter"
@@ -41,6 +42,7 @@ func (r *VideoRepository) GetListVideo(ctx context.Context, req *model.GetListVi
 		query.WriteString(" LIMIT ?, ? ")
 		queryParams = append(queryParams, req.Offset, req.Limit)
 	}
+	query.WriteString(fmt.Sprintf(" ORDER BY %s %s ", req.SortBy, req.OrderBy))
 
 	if ctx != nil {
 		err = r.conn.SelectContext(ctx, &result, query.String(), queryParams...)
@@ -88,7 +90,7 @@ func (r *VideoRepository) GetDetailVideo(ctx context.Context, id int64) (*model.
 
 	query.WriteString(`
 	SELECT
-		id, category_id, title, source, video_url, kabkota_id, status, created_at, 
+		id, category_id, title, source, video_url, kabkota_id, status, created_at, seq, is_push_notification,
 		updated_at, created_by, updated_by
 	FROM videos
 	`)
@@ -197,20 +199,21 @@ func (r *VideoRepository) Insert(ctx context.Context, params *model.CreateVideoR
 	actor := 1
 	query.WriteString("INSERT INTO videos")
 	query.WriteString(`
-		(category_id, title, source, video_url, kabkota_id, seq, status, created_by, created_at, updated_by, updated_at)`)
+		(category_id, title, source, video_url, kabkota_id, seq, is_push_notification, status, created_by, created_at, updated_by, updated_at)`)
 	query.WriteString(`VALUES(
-		:category_id, :title, :source, :video_url, :kabkota_id, :seq, :status, :actor, :created_at, :actor, :updated_at)`)
+		:category_id, :title, :source, :video_url, :kabkota_id, :seq, :is_push_notification, :status, :actor, :created_at, :actor, :updated_at)`)
 	queryParams := map[string]interface{}{
-		"category_id": params.CategoryID,
-		"title":       params.Title,
-		"source":      params.Source,
-		"video_url":   params.VideoURL,
-		"kabkota_id":  params.RegencyID,
-		"status":      params.Status,
-		"created_at":  current,
-		"actor":       actor,
-		"updated_at":  current,
-		"seq":         params.Sequence,
+		"category_id":          params.CategoryID,
+		"title":                params.Title,
+		"source":               params.Source,
+		"video_url":            params.VideoURL,
+		"kabkota_id":           params.RegencyID,
+		"status":               params.Status,
+		"created_at":           current,
+		"actor":                actor,
+		"updated_at":           current,
+		"seq":                  params.Sequence,
+		"is_push_notification": params.IsPushNotification,
 	}
 
 	if ctx != nil {
@@ -245,6 +248,10 @@ func (r *VideoRepository) Update(ctx context.Context, params *model.UpdateVideoR
 	if params.Source != nil {
 		updatedField = append(updatedField, "source")
 		queryParams["source"] = converter.GetStringFromPointer(params.Source)
+	}
+	if params.IsPushNotification != nil {
+		updatedField = append(updatedField, "is_push_notification")
+		queryParams["is_push_notification"] = converter.GetBoolFromPointer(params.IsPushNotification)
 	}
 	if params.VideoURL != nil {
 		updatedField = append(updatedField, "video_url")
