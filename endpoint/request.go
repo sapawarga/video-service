@@ -9,11 +9,14 @@ import (
 )
 
 type GetVideoRequest struct {
+	Search     *string `json:"search"`
 	RegencyID  *int64  `json:"regency_id"`
 	Page       *int64  `json:"page"`
 	Limit      *int64  `json:"limit"`
 	Title      *string `json:"title"`
 	CategoryID *int64  `json:"category_id"`
+	SortBy     string  `json:"sort_by"`
+	SortOrder  string  `json:"sort_order"`
 }
 
 type RequestID struct {
@@ -21,24 +24,26 @@ type RequestID struct {
 }
 
 type CreateVideoRequest struct {
-	Title      string `json:"title"`
-	Source     string `json:"source"`
-	CategoryID int64  `json:"category_id"`
-	RegencyID  *int64 `json:"kabkota_id"`
-	VideoURL   string `json:"video_url"`
-	Status     int64  `json:"status"`
-	Sequence   int64  `json:"seq"`
+	Title              string `json:"title"`
+	Source             string `json:"source"`
+	CategoryID         int64  `json:"category_id"`
+	RegencyID          *int64 `json:"kabkota_id"`
+	VideoURL           string `json:"video_url"`
+	Status             int64  `json:"status"`
+	Sequence           int64  `json:"seq"`
+	IsPushNotification bool   `json:"is_push_notification"`
 }
 
 type UpdateVideoRequest struct {
-	ID         *int64  `json:"id"`
-	Title      *string `json:"title"`
-	Source     *string `json:"source"`
-	CategoryID *int64  `json:"category_id"`
-	RegencyID  *int64  `json:"kabkota_id"`
-	VideoURL   *string `json:"video_url"`
-	Status     *int64  `json:"status"`
-	Sequence   *int64  `json:"seq"`
+	ID                 *int64  `json:"id"`
+	Title              *string `json:"title"`
+	Source             *string `json:"source"`
+	CategoryID         *int64  `json:"category_id"`
+	RegencyID          *int64  `json:"kabkota_id"`
+	VideoURL           *string `json:"video_url"`
+	Status             *int64  `json:"status"`
+	Sequence           *int64  `json:"seq"`
+	IsPushNotification *bool   `json:"is_push_notification"`
 }
 
 func ValidateInputs(in interface{}) error {

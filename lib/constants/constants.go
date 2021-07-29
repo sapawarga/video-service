@@ -18,3 +18,13 @@ const (
 	PER_PAGE         int64 = 20
 	TOTAL_PAGE       int64 = 1
 )
+
+// AscOrDesc ...
+var AscOrDesc = map[string]string{
+	"ascending":  "ASC",
+	"descending": "DESC",
+	"asc":        "ASC",
+	"desc":       "DESC",
+	"ASC":        "ASC",
+	"DESC":       "DESC",
+}

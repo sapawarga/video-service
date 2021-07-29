@@ -65,12 +65,23 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 	limitString := r.URL.Query().Get("limit")
 	categoryIDString := r.URL.Query().Get("category_id")
 	title := r.URL.Query().Get("title")
+	search := r.URL.Query().Get("search")
+	sortBy := r.URL.Query().Get("sort_by")
+	sortOrder := r.URL.Query().Get("sort_order")
 
 	if pageString == "0" || pageString == "" {
 		pageString = "1"
 	}
 	if limitString == "" || limitString == "0" {
 		limitString = "10"
+	}
+	if sortBy == "" {
+		sortBy = "created_at"
+	}
+	if sortOrder != "" {
+		sortOrder = constants.AscOrDesc[sortOrder]
+	} else {
+		sortOrder = "DESC"
 	}
 	_, regID := converter.ConvertFromStringToInt64(regIDString)
 	var pointerRegID *int64
@@ -89,11 +100,14 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 		pointerCatID = &categoryID
 	}
 	request := &endpoint.GetVideoRequest{
+		Search:     converter.SetPointerString(search),
 		RegencyID:  pointerRegID,
 		Page:       pageInt,
 		Limit:      limit,
 		CategoryID: pointerCatID,
 		Title:      converter.SetPointerString(title),
+		SortBy:     sortBy,
+		SortOrder:  sortOrder,
 	}
 
 	return request, nil

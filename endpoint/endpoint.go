@@ -21,6 +21,9 @@ func MakeGetListVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoin
 			Limit:      req.Limit,
 			CategoryID: req.CategoryID,
 			Title:      req.Title,
+			Search:     req.Search,
+			SortBy:     req.SortBy,
+			SortOrder:  req.SortOrder,
 		})
 		if err != nil {
 			return nil, err
@@ -120,13 +123,14 @@ func MakeCreateNewVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpo
 		}
 
 		if err = fs.CreateNewVideo(ctx, &model.CreateVideoRequest{
-			Title:      req.Title,
-			Source:     req.Source,
-			CategoryID: req.CategoryID,
-			RegencyID:  req.RegencyID,
-			Sequence:   req.Sequence,
-			VideoURL:   req.VideoURL,
-			Status:     req.Status,
+			Title:              req.Title,
+			Source:             req.Source,
+			CategoryID:         req.CategoryID,
+			RegencyID:          req.RegencyID,
+			Sequence:           req.Sequence,
+			VideoURL:           req.VideoURL,
+			Status:             req.Status,
+			IsPushNotification: req.IsPushNotification,
 		}); err != nil {
 			return nil, err
 		}
@@ -146,14 +150,15 @@ func MakeUpdateVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoint
 		}
 
 		if err = fs.UpdateVideo(ctx, &model.UpdateVideoRequest{
-			ID:         req.ID,
-			Title:      req.Title,
-			Source:     req.Source,
-			CategoryID: req.CategoryID,
-			RegencyID:  req.RegencyID,
-			VideoURL:   req.VideoURL,
-			Status:     req.Status,
-			Sequence:   req.Sequence,
+			ID:                 req.ID,
+			Title:              req.Title,
+			Source:             req.Source,
+			CategoryID:         req.CategoryID,
+			RegencyID:          req.RegencyID,
+			VideoURL:           req.VideoURL,
+			Status:             req.Status,
+			Sequence:           req.Sequence,
+			IsPushNotification: req.IsPushNotification,
 		}); err != nil {
 			return nil, err
 		}

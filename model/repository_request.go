@@ -6,4 +6,7 @@ type GetListVideoRepoRequest struct {
 	Offset     *int64
 	CategoryID *int64
 	Title      *string
+	Search     *string
+	SortBy     string
+	OrderBy    string
 }

@@ -57,3 +57,8 @@ func ConvertFromStringToInt64(val string) (pointerInt64 *int64, plainInt64 int64
 func ConvertBoolFromInteger(val int64) bool {
 	return val != 0
 }
+
+// GetBoolFromPointer ...
+func GetBoolFromPointer(val *bool) bool {
+	return *val
+}
