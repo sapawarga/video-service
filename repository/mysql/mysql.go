@@ -38,11 +38,11 @@ func (r *VideoRepository) GetListVideo(ctx context.Context, req *model.GetListVi
 	`)
 	querySelect, queryParams := selectQuery(ctx, query, req)
 	query.WriteString(querySelect.String())
+	query.WriteString(fmt.Sprintf(" ORDER BY %s %s ", req.SortBy, req.OrderBy))
 	if req.Limit != nil && req.Offset != nil {
 		query.WriteString(" LIMIT ?, ? ")
 		queryParams = append(queryParams, req.Offset, req.Limit)
 	}
-	query.WriteString(fmt.Sprintf(" ORDER BY %s %s ", req.SortBy, req.OrderBy))
 
 	if ctx != nil {
 		err = r.conn.SelectContext(ctx, &result, query.String(), queryParams...)
