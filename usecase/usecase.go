@@ -256,6 +256,7 @@ func (v *Video) appendVideoData(ctx context.Context, data []*model.VideoResponse
 			UpdatedAt:          video.UpdatedAt,
 			CreatedBy:          video.CreatedBy,
 			UpdatedBy:          video.UpdatedBy,
+			Sequence:           video.Sequence.Int64,
 		}
 		result = append(result, video)
 	}
