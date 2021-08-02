@@ -10,6 +10,7 @@ type GetListVideoRequest struct {
 	Title      *string
 	SortBy     string
 	SortOrder  string
+	Status     int64
 }
 
 // CreateVideoRequest ...

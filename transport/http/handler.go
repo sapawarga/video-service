@@ -68,6 +68,12 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 	search := r.URL.Query().Get("search")
 	sortBy := r.URL.Query().Get("sort_by")
 	sortOrder := r.URL.Query().Get("sort_order")
+	status, _ := converter.ConvertFromStringToInt64(r.URL.Query().Get("status"))
+	var statusDef int64 = 10
+
+	if status != nil {
+		statusDef = *status
+	}
 
 	if pageString == "0" || pageString == "" {
 		pageString = "1"
@@ -108,6 +114,7 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 		Title:      converter.SetPointerString(title),
 		SortBy:     sortBy,
 		SortOrder:  sortOrder,
+		Status:     statusDef,
 	}
 
 	return request, nil

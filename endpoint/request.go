@@ -17,6 +17,7 @@ type GetVideoRequest struct {
 	CategoryID *int64  `json:"category_id"`
 	SortBy     string  `json:"sort_by"`
 	SortOrder  string  `json:"sort_order"`
+	Status     int64   `json:"status"`
 }
 
 type RequestID struct {
