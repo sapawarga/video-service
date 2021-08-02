@@ -9,4 +9,5 @@ type GetListVideoRepoRequest struct {
 	Search     *string
 	SortBy     string
 	OrderBy    string
+	Status     int64
 }

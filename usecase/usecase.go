@@ -44,6 +44,7 @@ func (v *Video) GetListVideo(ctx context.Context, req *model.GetListVideoRequest
 		Search:     req.Search,
 		SortBy:     req.SortBy,
 		OrderBy:    req.SortOrder,
+		Status:     req.Status,
 	}
 
 	resp, err := v.repo.GetListVideo(ctx, request)

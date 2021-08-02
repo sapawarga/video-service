@@ -24,6 +24,7 @@ func MakeGetListVideo(ctx context.Context, fs usecase.UsecaseI) endpoint.Endpoin
 			Search:     req.Search,
 			SortBy:     req.SortBy,
 			SortOrder:  req.SortOrder,
+			Status:     req.Status,
 		})
 		if err != nil {
 			return nil, err

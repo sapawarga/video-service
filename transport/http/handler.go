@@ -67,8 +67,15 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 	title := r.URL.Query().Get("title")
 	search := r.URL.Query().Get("search")
 	sortBy := r.URL.Query().Get("sort_by")
-	sortOrder := r.URL.Query().Get("sort_order")
-
+	sortOrder := "DESC"
+	if r.URL.Query().Get("sort_order") != "" {
+		sortOrder = constants.AscOrDesc[r.URL.Query().Get("sort_order")]
+	}
+	status, _ := converter.ConvertFromStringToInt64(r.URL.Query().Get("status"))
+	var statusDef int64 = 10
+	if status != nil {
+		statusDef = *status
+	}
 	if pageString == "0" || pageString == "" {
 		pageString = "1"
 	}
@@ -78,28 +85,19 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 	if sortBy == "" {
 		sortBy = "created_at"
 	}
-	if sortOrder != "" {
-		sortOrder = constants.AscOrDesc[sortOrder]
-	} else {
-		sortOrder = "DESC"
-	}
 	_, regID := converter.ConvertFromStringToInt64(regIDString)
-	var pointerRegID *int64
-	if regID == 0 {
-		pointerRegID = nil
-	} else {
+	var pointerRegID *int64 = nil
+	if regID != 0 {
 		pointerRegID = &regID
 	}
 	pageInt, _ := converter.ConvertFromStringToInt64(pageString)
 	limit, _ := converter.ConvertFromStringToInt64(limitString)
 	_, categoryID := converter.ConvertFromStringToInt64(categoryIDString)
-	var pointerCatID *int64
-	if categoryID == 0 {
-		pointerCatID = nil
-	} else {
+	var pointerCatID *int64 = nil
+	if categoryID != 0 {
 		pointerCatID = &categoryID
 	}
-	request := &endpoint.GetVideoRequest{
+	return &endpoint.GetVideoRequest{
 		Search:     converter.SetPointerString(search),
 		RegencyID:  pointerRegID,
 		Page:       pageInt,
@@ -108,9 +106,8 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 		Title:      converter.SetPointerString(title),
 		SortBy:     sortBy,
 		SortOrder:  sortOrder,
-	}
-
-	return request, nil
+		Status:     statusDef,
+	}, nil
 }
 
 func decodeGetByID(ctx context.Context, r *http.Request) (interface{}, error) {

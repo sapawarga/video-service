@@ -24,6 +24,8 @@ func selectQuery(ctx context.Context, query bytes.Buffer, params *model.GetListV
 		newQuery.WriteString(andWhere(ctx, query, "category_id", "="))
 		queryParams = append(queryParams, converter.GetInt64FromPointer(params.CategoryID))
 	}
+	newQuery.WriteString(andWhere(ctx, query, "status", "="))
+	queryParams = append(queryParams, params.Status)
 	return newQuery, queryParams
 }
 
