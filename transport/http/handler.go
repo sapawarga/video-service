@@ -86,19 +86,15 @@ func decodeGetListVideo(ctx context.Context, r *http.Request) (interface{}, erro
 		sortBy = "created_at"
 	}
 	_, regID := converter.ConvertFromStringToInt64(regIDString)
-	var pointerRegID *int64
-	if regID == 0 {
-		pointerRegID = nil
-	} else {
+	var pointerRegID *int64 = nil
+	if regID != 0 {
 		pointerRegID = &regID
 	}
 	pageInt, _ := converter.ConvertFromStringToInt64(pageString)
 	limit, _ := converter.ConvertFromStringToInt64(limitString)
 	_, categoryID := converter.ConvertFromStringToInt64(categoryIDString)
-	var pointerCatID *int64
-	if categoryID == 0 {
-		pointerCatID = nil
-	} else {
+	var pointerCatID *int64 = nil
+	if categoryID != 0 {
 		pointerCatID = &categoryID
 	}
 	return &endpoint.GetVideoRequest{
